@@ -1,0 +1,3 @@
+fastapi
+fastF1
+uvicorn

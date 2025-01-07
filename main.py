@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 
 from analisys._init_ import analisys_track_dominance
 
@@ -15,6 +16,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/", include_in_schema=False)
+def redirect_to_docs():
+    return RedirectResponse(url="/docs")
+
 @app.get("/analisys/track_dominance/{year}/{round}/{session}")
 def get_track_dominance(year: int, round: int, session: str):
 
@@ -22,6 +27,6 @@ def get_track_dominance(year: int, round: int, session: str):
     img_base64 = convert_img_to_bytes()
     return {"image": f"data:image/png;base64,{img_base64}"}
 
-if __name__ == '__main__':
+"""if __name__ == '__main__':
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=8000)"""
