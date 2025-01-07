@@ -1,6 +1,6 @@
 from .analisys_qualy_results import analisys_qualy_results
 from .analisys_race_results import analisys_race_results
-from .analisys_team_pace_comparison import analisys_team_pace_comparison
+from .analisys_team_performace import analisys_team_performace
 from .analisys_race_pace import analisys_race_pace
 from .analisys_lap_time_average import analisys_lap_time_average
 from .analisys_top_speed import analisys_top_speed

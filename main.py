@@ -7,6 +7,7 @@ from fastapi.responses import RedirectResponse
 from analisys._init_ import analisys_track_dominance
 from analisys._init_ import analisys_top_speed
 from analisys._init_ import analisys_lap_time_average
+from analisys._init_ import analisys_team_performace
 
 from utils._init_ import convert_img_to_bytes
 from enums.process_state import ProcessState
@@ -70,6 +71,22 @@ def get_top_speed(year: int, round: int, session: str):
 def get_lap_time_average(year: int, round: int, session: str):
 
     result = analisys_lap_time_average(year, round, session)
+    if result == ProcessState.FAILED.name:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": "Sesión no encontrada.",
+                "message": "La sesión solicitada no existe. Asegúrate de que el año, la ronda y la sesión sean correctos.",
+            }
+        )
+
+    img_base64 = convert_img_to_bytes()
+    return {"image": f"data:image/png;base64,{img_base64}"}
+
+@app.get("/analisys/team_performace/{year}/{round}/{session}", tags=["Análisis"])
+def get_team_performace(year: int, round: int, session: str):
+
+    result = analisys_team_performace(year, round, session)
     if result == ProcessState.FAILED.name:
         raise HTTPException(
             status_code=400,

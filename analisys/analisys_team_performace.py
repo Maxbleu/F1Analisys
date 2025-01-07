@@ -4,14 +4,23 @@ import matplotlib.ticker as ticker
 
 import fastf1.plotting
 
+from enums.process_state import ProcessState
+
 def format_time_mmssmmm(seconds):
     minutes = int(seconds // 60)
     remaining_seconds = seconds % 60
     return f"{minutes}:{remaining_seconds:06.3f}"
 
-def analisys_team_pace_comparison(session):
+def analisys_team_performace(year: int, round: int, session: str):
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
                             color_scheme='fastf1')
+
+    try:
+        session = fastf1.get_session(year, round, session)
+    except Exception as e:
+        return ProcessState.FAILED.name
+
+    session.load()
 
     laps = session.laps.pick_quicklaps()
 
@@ -49,7 +58,8 @@ def analisys_team_pace_comparison(session):
 
     ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: format_time_mmssmmm(x)))
 
-    plt.title(f"TEAM COMPARISON {session.event['EventName']} {session.event.year}")
+    plt.title(f"{session.event['EventName']} {session.event.year} {session.name} | Team Performance")
 
     plt.tight_layout()
-    plt.show()
+
+    return ProcessState.COMPLETED.name
