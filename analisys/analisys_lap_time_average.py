@@ -4,10 +4,19 @@ import matplotlib.pyplot as plt
 
 import pandas as pd
 
-def analisys_laptime_average(session):
+from enums.process_state import ProcessState
+
+def analisys_lap_time_average(year: int, round: int, session: str):
 
     fastf1.plotting.setup_mpl(mpl_timedelta_support=True, misc_mpl_mods=False,
                             color_scheme='fastf1')
+
+    try:
+        session = fastf1.get_session(year, round, session)
+    except Exception as e:
+        return ProcessState.FAILED.name
+
+    session.load()
 
     session.laps["LapTime"] = pd.to_timedelta(session.laps["LapTime"])
 
@@ -62,7 +71,7 @@ def analisys_laptime_average(session):
     ax.set_axisbelow(True)
     ax.xaxis.grid(True, which='major', linestyle='--', color='black', zorder=-1000)
 
-    plt.title(f"AVERANGE LAP TIME DRIVERS {session.event['EventName']} {session.event.year}")
+    plt.title(f"{session.event['EventName']} {session.event.year} {session.name} | Lap Time Average")
 
     for bar in bars:
         width = bar.get_width()
@@ -74,4 +83,4 @@ def analisys_laptime_average(session):
         ax.text(width+0.01, bar.get_y() + bar.get_height()/2, cadena, 
         va='center', ha='left', color='white')
 
-    plt.show()
+    return ProcessState.COMPLETED.name

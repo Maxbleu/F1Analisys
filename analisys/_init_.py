@@ -2,6 +2,6 @@ from .analisys_qualy_results import analisys_qualy_results
 from .analisys_race_results import analisys_race_results
 from .analisys_team_pace_comparison import analisys_team_pace_comparison
 from .analisys_race_pace import analisys_race_pace
-from .analisys_laptime_average import analisys_laptime_average
+from .analisys_lap_time_average import analisys_lap_time_average
 from .analisys_top_speed import analisys_top_speed
 from .analisys_track_dominance import analisys_track_dominance
