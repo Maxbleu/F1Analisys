@@ -1,3 +1,7 @@
 fastapi
 fastF1
 uvicorn
+seaborn
+matplotlib
+numpy
+pandas
