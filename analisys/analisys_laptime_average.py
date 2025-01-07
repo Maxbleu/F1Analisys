@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 import pandas as pd
 
-def laptime_average_each_driver(session):
+def analisys_laptime_average(session):
 
     fastf1.plotting.setup_mpl(mpl_timedelta_support=True, misc_mpl_mods=False,
                             color_scheme='fastf1')

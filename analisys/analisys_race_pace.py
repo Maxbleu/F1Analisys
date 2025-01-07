@@ -10,7 +10,7 @@ def format_time_mmssmmm(seconds):
     remaining_seconds = seconds % 60
     return f"{minutes}:{remaining_seconds:06.3f}"
 
-def race_pace_each_driver(session):
+def analisys_race_pace(session):
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
                         color_scheme='fastf1')
 

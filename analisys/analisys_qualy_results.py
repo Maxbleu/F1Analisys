@@ -5,7 +5,7 @@ from timple.timedelta import strftimedelta
 import fastf1.plotting
 from fastf1.core import Laps
 
-def qualy_results(session):
+def analisys_qualy_results(session):
     drivers = pd.unique(session.laps['Driver'])
     print(drivers)
 

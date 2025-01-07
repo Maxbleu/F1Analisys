@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 import fastf1.plotting
 
-def race_results(session):
+def analisys_race_results(session):
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
                             color_scheme='fastf1')
     

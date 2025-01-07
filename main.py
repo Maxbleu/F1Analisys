@@ -27,6 +27,8 @@ def get_track_dominance(year: int, round: int, session: str):
     img_base64 = convert_img_to_bytes()
     return {"image": f"data:image/png;base64,{img_base64}"}
 
+
+
 """if __name__ == '__main__':
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8000)"""
