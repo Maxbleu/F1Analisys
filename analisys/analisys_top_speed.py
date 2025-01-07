@@ -3,10 +3,19 @@ import pandas as pd
 
 import matplotlib.pyplot as plt
 
-def analisys_top_speed(session):
+from enums.process_state import ProcessState
+
+def analisys_top_speed(year, round, session):
 
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
                         color_scheme='fastf1')
+
+    try:
+        session = fastf1.get_session(year, round, session)
+    except Exception as e:
+        return ProcessState.FAILED.name
+
+    session.load()
 
     laps = session.laps[session.laps["Deleted"] == False]
 
@@ -34,23 +43,23 @@ def analisys_top_speed(session):
 
     bars = ax.bar(df_top_speeds["Driver"], df_top_speeds["TopSpeed"], color=team_colors)
 
-    plt.title(f"TOP SPEED {session.event['EventName']} {session.event.year}")
-    plt.xlabel('Pilotos')
-    plt.ylabel('TopSpeed')
+    plt.title(f"{session.event['EventName']} {session.event.year} {session.name} | Top Speed")
+    plt.xlabel('Drivers')
+    plt.ylabel('Speed')
 
     iterator = 0
     for bar in bars:
         top_speed = df_top_speeds.iloc[iterator]["TopSpeed"]
         height = bar.get_height()
         ax.text(
-            bar.get_x() + bar.get_width() / 2,  # Posición x: centro de la barra
-            height + 1,  # Posición y: ligeramente por encima de la barra
-            f"{top_speed:.1f}",  # Texto: valor de la velocidad con 1 decimal
-            ha='center',  # Alineación horizontal: centrado
-            va='bottom',  # Alineación vertical: en la parte inferior del texto
-            color='white',  # Color del texto
-            fontsize=10  # Tamaño de la fuente
+            bar.get_x() + bar.get_width() / 2,
+            height + 1,
+            f"{top_speed:.1f}",
+            ha='center',
+            va='bottom',
+            color='white',
+            fontsize=10
         )
         iterator += 1
 
-    plt.show()
+    return ProcessState.COMPLETED.name

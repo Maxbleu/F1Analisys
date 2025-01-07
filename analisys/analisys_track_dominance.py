@@ -11,6 +11,8 @@ import fastf1.plotting
 
 import random
 
+from enums.process_state import ProcessState
+
 def frase_grafica_qualy(drivers):
     cadena = ""
     for i, driver in enumerate(drivers):
@@ -25,7 +27,11 @@ def random_hex_color():
 def analisys_track_dominance(year, round, session):
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False, color_scheme='fastf1')
 
-    session = fastf1.get_session(year, round, session)
+    try:
+        session = fastf1.get_session(year, round, session)
+    except Exception as e:
+        return ProcessState.FAILED.name
+
     session.load()
 
     df_three_best_race_laps = session.laps.pick_not_deleted().sort_values(by="LapTime").drop_duplicates(subset="Driver").reset_index(drop=True).head(4)
@@ -68,11 +74,11 @@ def analisys_track_dominance(year, round, session):
     plt.tick_params(labelleft=False, left=False, labelbottom=False, bottom=False)
 
     drivers = df_three_best_race_laps["Driver"].head(3).tolist()
-    title = f"TRACK DOMINANCE {session.event['EventName']} {session.event.year}\n"
+    title = f"{session.event['EventName']} {session.event.year} {session.name}"
     if session.name == "Qualifying":
-        title = title + f"{frase_grafica_qualy(drivers)}"
+        title = title + f"\n {frase_grafica_qualy(drivers)}"
     else:
-        title = title + "WITH THE FASTEST LAPS"
+        title = title + " | Track dominance \nfastest laps"
 
     plt.suptitle(title)
 
@@ -84,3 +90,5 @@ def analisys_track_dominance(year, round, session):
     )
 
     cbar.set_ticklabels(df_three_best_race_laps["DriverNumber"].head(3).tolist())
+
+    return ProcessState.COMPLETED.name
