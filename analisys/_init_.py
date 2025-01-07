@@ -1,0 +1,7 @@
+from .qualy_results import qualy_results
+from .race_results import race_results
+from .team_pace_comparison import team_pace_comparison
+from .race_pace_each_driver import race_pace_each_driver
+from .laptime_average_each_driver import laptime_average_each_driver
+from .top_speed_each_driver import top_speed_each_driver
+from .analisys_track_dominance import analisys_track_dominance
