@@ -52,6 +52,4 @@ def analisys_fastest_laps(year: int, round: int, session: str):
     plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name}\n"
                 f"Fastest Lap: {lap_time_string} ({pole_lap['Driver']})")
 
-    plt.show()
-
     return ProcessState.COMPLETED.name

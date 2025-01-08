@@ -11,6 +11,7 @@ from analisys._init_ import analisys_team_performace
 from analisys._init_ import analisys_race_pace
 from analisys._init_ import analisys_fastest_laps
 from analisys._init_ import analisys_race_position_evolution
+from analisys._init_ import analisys_fastest_drivers_compound
 
 from utils._init_ import convert_img_to_bytes
 from enums.process_state import ProcessState
@@ -33,6 +34,9 @@ app.add_middleware(
 #   TEAM PERFORMANCE ¡OK!
 #   FASTEST LAPS ¡OK! REVISAR
 #   RACE POSITION EVOLITION !OK! REVISAR
+
+#   FASTEST DRIVERS PER COMPOUND
+#   
 
 # Ideas:
 #   AÑADIR UN ENDPOINT DONDE PUEDAS OBTENER DE CADA SESION EN UN SOLO FIG UNA GRAFICA POR CADA COMPUESTO USADO Y PONER EN ORDEN LOS PILOTOS MÁS RÁPIDOS CON CADA COMPUESTO DE LA SESIÓN
@@ -157,5 +161,20 @@ def get_race_position_evolution(year: int, round: int, session: str):
             }
         )
     
+    img_base64 = convert_img_to_bytes()
+    return {"image": f"data:image/png;base64,{img_base64}"}
+
+@app.get("/analisys/fastest_drivers_compound/{year}/{round}/{session}", tags=["Análisis"])
+def get_fastest_drivers_compound(year: int, round: int, session: str):
+
+    result = analisys_fastest_drivers_compound(year, round, session)
+    if result == ProcessState.FAILED.name:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": "Sesión no encontrada.",
+                "message": "La sesión solicitada no existe. Asegúrate de que el año, la ronda y la sesión sean correctos.",
+            }
+        )
     img_base64 = convert_img_to_bytes()
     return {"image": f"data:image/png;base64,{img_base64}"}

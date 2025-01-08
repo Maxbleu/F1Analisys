@@ -5,3 +5,4 @@ from .analisys_race_pace import analisys_race_pace
 from .analisys_lap_time_average import analisys_lap_time_average
 from .analisys_top_speed import analisys_top_speed
 from .analisys_track_dominance import analisys_track_dominance
+from .analisys_fastest_drivers_compound import analisys_fastest_drivers_compound
