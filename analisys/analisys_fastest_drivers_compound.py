@@ -30,39 +30,35 @@ def analisys_fastest_drivers_compound(year: int, round: int, session: str):
     for compound in avg_lap_times['Compound'].unique():
         compound_laps = avg_lap_times[avg_lap_times['Compound'] == compound]
         compound_laps = compound_laps.sort_values(by="AvgLapTime", ascending=True).reset_index(drop=True)
+        compound_laps = compound_laps.dropna()
         compounds_laps[compound] = compound_laps
 
-    """team_colors = {}
+    team_colors = {}
     for key, value in compounds_laps.items():
         colors = []
         for index, row in value.iterrows():
             color = fastf1.plotting.get_team_color(row['Team'], session=session)
             colors.append(color)
-        team_colors[key] = colors"""
+        team_colors[key] = colors
 
-    fig, axes = plt.subplots(1, len(compounds_laps), figsize=(10, 15))
+    fig, axes = plt.subplots(1, len(compounds_laps), figsize=(10, 5))
 
     if len(compounds_laps) == 1:
         axes = [axes]
 
-    for ax, (compound, lap_times) in zip(axes, compounds_laps.items()):
-    
-        
-        ax.barh(avg_lap_times.index, avg_lap_times['AvgLapTime'], color="blue")
-        ax.set_yticks(avg_lap_times.index)
-        ax.set_yticklabels(avg_lap_times['Driver'])
+    for ax, (key, value) in zip(axes, compounds_laps.items()):
+
+        colors = team_colors[key]
+
+        ax.barh(value.index, value['AvgLapTime'], color=colors)
+        ax.set_yticks(value.index)
+        ax.set_yticklabels(value['Driver'])
 
         ax.invert_yaxis()
 
         ax.set_axisbelow(True)
         ax.xaxis.grid(True, which='major', linestyle='--', color='black', zorder=-1000)
 
-        fastest_lap = avg_lap_times.loc[avg_lap_times['AvgLapTime'].idxmin()]
-        lap_time_string = strftimedelta(fastest_lap['AvgLapTime'], '%m:%s.%ms')
-
-        plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name}\n"
-                    f"Fastest Lap: {lap_time_string} ({fastest_lap['Driver']})")
-
-    plt.show()
+        ax.set_title(f"{key} laps")
 
     return ProcessState.COMPLETED.name
