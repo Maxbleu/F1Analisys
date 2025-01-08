@@ -10,6 +10,7 @@ from analisys._init_ import analisys_lap_time_average
 from analisys._init_ import analisys_team_performace
 from analisys._init_ import analisys_race_pace
 from analisys._init_ import analisys_fastest_laps
+from analisys._init_ import analisys_race_position_evolution
 
 from utils._init_ import convert_img_to_bytes
 from enums.process_state import ProcessState
@@ -30,8 +31,8 @@ app.add_middleware(
 #   LAP TIME AVERAGE ¡OK!
 #   RACE PACE ¡OK!
 #   TEAM PERFORMANCE ¡OK!
-#   FASTEST LAPS ¡OK! FALTA REVISAR EL ERROR DE VUELTAS RAPIDAS EN AGUA
-#   RACE RESULTS
+#   FASTEST LAPS ¡OK! 
+#   RACE RESULTS ¡!OK!
 
 @app.get("/", include_in_schema=False)
 def redirect_to_docs():
@@ -129,5 +130,26 @@ def get_fastest_laps(year: int, round: int, session: str):
                 "message": "La sesión solicitada no existe. Asegúrate de que el año, la ronda y la sesión sean correctos.",
             }
         )
+    img_base64 = convert_img_to_bytes()
+    return {"image": f"data:image/png;base64,{img_base64}"}
+
+#   AÑADIR TABLA DE STINTS EN LA DERECHA O IZQUIERDA DE LA GRAFICA
+@app.get("/analisys/race_position_evolution/{year}/{round}/{session}", tags=["Análisis"])
+def get_race_position_evolution(year: int, round: int, session: str):
+
+    result = analisys_race_position_evolution(year, round, session)
+    if result == ProcessState.FAILED.name or result == ProcessState.CANCELED.name:
+
+        if result == ProcessState.FAILED.name: message = "La sesión de carrera no existe. Asegúrate de que el año, la ronda sean correctos."
+        if result == ProcessState.CANCELED.name: message = "La sesión solicitada no es una carrera. Asegúrate de que seleccionaste una sesión de carrera."
+
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": "Sesión no encontrada.",
+                "message": message,
+            }
+        )
+    
     img_base64 = convert_img_to_bytes()
     return {"image": f"data:image/png;base64,{img_base64}"}

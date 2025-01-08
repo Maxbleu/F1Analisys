@@ -2,10 +2,20 @@ import matplotlib.pyplot as plt
 
 import fastf1.plotting
 
-def analisys_race_results(session):
+from enums.process_state import ProcessState
+
+def analisys_race_position_evolution(year: int, round: int, session: str):
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
                             color_scheme='fastf1')
-    
+
+    try:
+        if session != "R": return ProcessState.CANCELED.name
+        session = fastf1.get_session(year, round, session)
+    except Exception as e:
+        return ProcessState.FAILED.name
+
+    session.load()
+
     fig, ax = plt.subplots(figsize=(8.0, 4.9))
 
     for drv in session.drivers:
@@ -25,7 +35,7 @@ def analisys_race_results(session):
     ax.set_ylabel('Position')
 
     ax.legend(bbox_to_anchor=(1.0, 1.02))
-    plt.title(f"RACE RESULT {session.event['EventName']} {session.event.year}")
+    plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name} | Results")
     plt.tight_layout()
 
-    plt.show()
+    return ProcessState.COMPLETED.name
