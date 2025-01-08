@@ -5,14 +5,23 @@ import seaborn as sns
 
 import fastf1.plotting
 
+from enums.process_state import ProcessState
+
 def format_time_mmssmmm(seconds):
     minutes = int(seconds // 60)
     remaining_seconds = seconds % 60
     return f"{minutes}:{remaining_seconds:06.3f}"
 
-def analisys_race_pace(session):
+def analisys_race_pace(year: int, round: int, session: str):
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
                         color_scheme='fastf1')
+
+    try:
+        session = fastf1.get_session(year, round, session)
+    except Exception as e:
+        return ProcessState.FAILED.name
+
+    session.load()
 
     point_finishers = session.drivers[:10]
     
@@ -44,17 +53,18 @@ def analisys_race_pace(session):
                 order=finishing_order,
                 hue="Compound",
                 palette=fastf1.plotting.get_compound_mapping(session=session),
-                hue_order=["SOFT", "MEDIUM", "HARD"],
+                hue_order=["SOFT", "MEDIUM", "HARD", "INTERMEDIATE", "WET"],
                 linewidth=0,
                 size=4,
                 )
     
     ax.set_xlabel("Driver")
     ax.set_ylabel("Lap Time (s)")
-    plt.title(f"RACE PACE DRIVERS {session.event['EventName']} {session.event.year}")
+    plt.title(f"{session.event['EventName']} {session.event.year} {session.name} | Lap Pace Top 10")
     sns.despine(left=True, bottom=True)
 
     ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: format_time_mmssmmm(x)))
 
     plt.tight_layout()
-    plt.show()
+
+    return ProcessState.COMPLETED.name
