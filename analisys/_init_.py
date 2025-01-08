@@ -1,4 +1,4 @@
-from .analisys_qualy_results import analisys_qualy_results
+from .analisys_fastest_laps import analisys_fastest_laps
 from .analisys_race_results import analisys_race_results
 from .analisys_team_performace import analisys_team_performace
 from .analisys_race_pace import analisys_race_pace

@@ -9,6 +9,7 @@ from analisys._init_ import analisys_top_speed
 from analisys._init_ import analisys_lap_time_average
 from analisys._init_ import analisys_team_performace
 from analisys._init_ import analisys_race_pace
+from analisys._init_ import analisys_fastest_laps
 
 from utils._init_ import convert_img_to_bytes
 from enums.process_state import ProcessState
@@ -27,9 +28,9 @@ app.add_middleware(
 #   TRACK DOMINANCE ¡OK!
 #   TOP SPEED ¡OK!
 #   LAP TIME AVERAGE ¡OK!
-#   RACE PACE
+#   RACE PACE ¡OK!
 #   TEAM PERFORMANCE ¡OK!
-#   QUALIFYING RESULTS
+#   FASTEST LAPS ¡OK! FALTA REVISAR EL ERROR DE VUELTAS RAPIDAS EN AGUA
 #   RACE RESULTS
 
 @app.get("/", include_in_schema=False)
@@ -104,6 +105,22 @@ def get_team_performace(year: int, round: int, session: str):
 def get_race_pace(year: int, round: int, session: str):
 
     result = analisys_race_pace(year, round, session)
+    if result == ProcessState.FAILED.name:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": "Sesión no encontrada.",
+                "message": "La sesión solicitada no existe. Asegúrate de que el año, la ronda y la sesión sean correctos.",
+            }
+        )
+    img_base64 = convert_img_to_bytes()
+    return {"image": f"data:image/png;base64,{img_base64}"}
+
+#   REVISAR EL ERROR VUELTAS RAPIDAS EN AGUA http://localhost:8000/analisys/fastest_laps/2024/15/FP3
+@app.get("/analisys/fastest_laps/{year}/{round}/{session}", tags=["Análisis"])
+def get_fastest_laps(year: int, round: int, session: str):
+
+    result = analisys_fastest_laps(year, round, session)
     if result == ProcessState.FAILED.name:
         raise HTTPException(
             status_code=400,

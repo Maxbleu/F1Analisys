@@ -5,9 +5,20 @@ from timple.timedelta import strftimedelta
 import fastf1.plotting
 from fastf1.core import Laps
 
-def analisys_qualy_results(session):
+from enums.process_state import ProcessState
+
+def analisys_fastest_laps(year: int, round: int, session: str):
+
+    fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False)
+
+    try:
+        session = fastf1.get_session(year, round, session)
+    except Exception as e:
+        return ProcessState.FAILED.name
+
+    session.load()
+
     drivers = pd.unique(session.laps['Driver'])
-    print(drivers)
 
     list_fastest_laps = list()
     for drv in drivers:
@@ -20,8 +31,6 @@ def analisys_qualy_results(session):
     pole_lap = fastest_laps.pick_fastest()
     fastest_laps['LapTimeDelta'] = fastest_laps['LapTime'] - pole_lap['LapTime']
 
-    print(fastest_laps[['Driver', 'LapTime', 'LapTimeDelta']])
-
     team_colors = list()
     for index, lap in fastest_laps.iterlaps():
         color = fastf1.plotting.get_team_color(lap['Team'], session=session)
@@ -33,16 +42,16 @@ def analisys_qualy_results(session):
     ax.set_yticks(fastest_laps.index)
     ax.set_yticklabels(fastest_laps['Driver'])
 
-    # show fastest at the top
     ax.invert_yaxis()
 
-    # draw vertical lines behind the bars
     ax.set_axisbelow(True)
     ax.xaxis.grid(True, which='major', linestyle='--', color='black', zorder=-1000)
 
     lap_time_string = strftimedelta(pole_lap['LapTime'], '%m:%s.%ms')
 
-    plt.title(f"{session.event['EventName']} {session.event.year} Qualifying\n"
+    plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name}\n"
                 f"Fastest Lap: {lap_time_string} ({pole_lap['Driver']})")
 
     plt.show()
+
+    return ProcessState.COMPLETED.name
