@@ -29,8 +29,14 @@ def analisys_fastest_drivers_compound(year: int, round: int, session: str):
 
     for compound in avg_lap_times['Compound'].unique():
         compound_laps = avg_lap_times[avg_lap_times['Compound'] == compound]
+        
+        total_laps = session_laps[session_laps['Compound'] == compound].groupby(["Driver"])["LapTime"].count()
+        compound_laps["TotalLaps"] = compound_laps["Driver"].map(total_laps)
+        
         compound_laps = compound_laps.sort_values(by="AvgLapTime", ascending=True).reset_index(drop=True)
         compound_laps = compound_laps.dropna()
+        
+        compound_laps["AvgLapTimeDiff"] = compound_laps["AvgLapTime"] - compound_laps["AvgLapTime"].iloc[0]
         compounds_laps[compound] = compound_laps
 
     team_colors = {}
@@ -50,15 +56,25 @@ def analisys_fastest_drivers_compound(year: int, round: int, session: str):
 
         colors = team_colors[key]
 
-        ax.barh(value.index, value['AvgLapTime'], color=colors)
+        ax.barh(value.index, value["AvgLapTimeDiff"], color=colors)
         ax.set_yticks(value.index)
         ax.set_yticklabels(value['Driver'])
-
         ax.invert_yaxis()
-
         ax.set_axisbelow(True)
         ax.xaxis.grid(True, which='major', linestyle='--', color='black', zorder=-1000)
 
-        ax.set_title(f"{key} laps")
+        """for bar, total_lap in zip(bars, value["TotalLaps"]):
+            width = bar.get_width()
+            ax.text(width + 1, bar.get_y() + bar.get_height() / 2, str(total_lap),
+                    va='center', ha='left', color='white')"""
+
+        fastest_lap = value.iloc[0]
+        driver = fastest_lap['Driver']
+        fastest_time = fastest_lap['AvgLapTime']
+
+        ax.set_title(f"{key} average fastest\n {driver} - {strftimedelta(fastest_time, '%m:%s.%ms')}", fontsize=11)
+
+    plt.tight_layout()
+    plt.show()
 
     return ProcessState.COMPLETED.name
