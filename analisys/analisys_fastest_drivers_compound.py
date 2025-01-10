@@ -63,10 +63,11 @@ def analisys_fastest_drivers_compound(year: int, round: int, session: str):
         ax.set_axisbelow(True)
         ax.xaxis.grid(True, which='major', linestyle='--', color='black', zorder=-1000)
 
-        """for bar, total_lap in zip(bars, value["TotalLaps"]):
-            width = bar.get_width()
-            ax.text(width + 1, bar.get_y() + bar.get_height() / 2, str(total_lap),
-                    va='center', ha='left', color='white')"""
+        ax1 = ax.twinx()
+
+        ax1.barh(value.index, value["TotalLaps"], color='lightgrey')
+        ax1.set_yticks(value.index)
+        ax1.set_yticklabels(value['TotalLaps'])
 
         fastest_lap = value.iloc[0]
         driver = fastest_lap['Driver']
