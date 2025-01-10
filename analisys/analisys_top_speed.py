@@ -54,7 +54,7 @@ def analisys_top_speed(year, round, session):
         ax.text(
             bar.get_x() + bar.get_width() / 2,
             height + 1,
-            f"{top_speed:.1f}",
+            f"{top_speed}",
             ha='center',
             va='bottom',
             color='white',
