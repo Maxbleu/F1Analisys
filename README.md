@@ -42,12 +42,12 @@ This proyect is designed to get every analisys named before for normal persons o
 
 In every endpoint of this proyect, after the url, you can put if you want convert the image to bytes or not, if you don't want to convert the image to bytes, you need to put `?convert_img=False` in the url, because, this option is enabled by default. 
 
-### `?convert_img=False`
+### `/analisys/track_dominance/2024/10/Q?convert_img=False`
 In this case the url would be: [this example](https://f1analisys-production.up.railway.app/analisys/track_dominance/2024/10/Q?convert_img=False)
 
 <img src="./img/example_get_image_not_converted.png" alt="ejemplo de obtener un analisis sin convertir a bytes">
 
-### `?convert_img=True`
+### `/analisys/track_dominance/2024/10/Q?convert_img=True`
 In this case the url would be: [this example](https://f1analisys-production.up.railway.app/analisys/track_dominance/2024/10/Q)
 
 <img src="./img/example_get_image_converted.png" alt="ejemplo de obtener un analisis convertido a bytes">
