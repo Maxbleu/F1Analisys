@@ -29,23 +29,6 @@ app.add_middleware(
 
 app.mount("/temp", StaticFiles(directory="temp"), name="temp")
 
-# Endpoints:
-#   TRACK DOMINANCE ¡OK!
-#   TOP SPEED ¡OK!
-#   LAP TIME AVERAGE ¡OK!
-#   RACE PACE ¡OK!
-#   TEAM PERFORMANCE ¡OK!
-#   FASTEST LAPS ¡OK! REVISAR
-#   RACE POSITION EVOLITION !OK! REVISAR
-#   FASTEST DRIVERS PER COMPOUND ¡OK!
-
-# Ideas:
-#   GESTION DE LA BATERIA EN LAS SESIONES
-#   USO MEDIO DEL ACELERADOR POR VUELTA
-#   USO MEDIO DEL FRENO POR VUELTA
-
-#   COMPARADOR DE PILOTOS EN UNA SESIÓN EN PARTICULAR CON TELEMETRIA
-
 @app.get("/", include_in_schema=False)
 def redirect_to_docs():
     return RedirectResponse(url="/docs")
