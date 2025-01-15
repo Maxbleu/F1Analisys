@@ -42,12 +42,14 @@ This proyect is designed to get every analisys named before for normal persons o
 
 In every endpoint of this proyect, after the url, you can put if you want convert the image to bytes or not, if you don't want to convert the image to bytes, you need to put `?convert_img=False` in the url, because, this option is enabled by default. 
 
-### `/analisys/track_dominance/2024/10/Q?convert_img=False`
+### Usage to convert image
+
+#### `/analisys/track_dominance/2024/10/Q?convert_img=False`
 In this case the url would be: [this example](https://f1analisys-production.up.railway.app/analisys/track_dominance/2024/10/Q?convert_img=False)
 
 <img src="./img/example_get_image_not_converted.png" alt="ejemplo de obtener un analisis sin convertir a bytes">
 
-### `/analisys/track_dominance/2024/10/Q?convert_img=True`
+#### `/analisys/track_dominance/2024/10/Q?convert_img=True`
 In this case the url would be: [this example](https://f1analisys-production.up.railway.app/analisys/track_dominance/2024/10/Q)
 
 <img src="./img/example_get_image_converted.png" alt="ejemplo de obtener un analisis convertido a bytes">
@@ -66,7 +68,7 @@ If that proyect don't exist, this proyect wouldn't exist. I only have one word i
 
 ## Contributing
 
-For contributing to this proyect, you need to read first of all [CONTRIBUTING.md](https://github.com/Maxbleu/F1Analis/CONTRIBUTING.md)
+For contributing to this proyect, you need to read first of all [CONTRIBUTING.md](https://github.com/Maxbleu/F1Analisys/blob/master/CONTRIBUTING.md)
 
 ## Notice
 F1Analisys is unofficial and are not associated in any way with the Formula 1 companies. F1, FORMULA ONE, FORMULA 1, FIA FORMULA ONE WORLD CHAMPIONSHIP, GRAND PRIX and related marks are trade marks of Formula One Licensing B.V.
