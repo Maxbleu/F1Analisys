@@ -1,6 +1,6 @@
 # F1Analisys
 
-<img src="./img/plot_example.png" alt="" width="500" height="400">
+<img src="./img/banner_repository.png" alt="Banner principal del proyecto">
 
 F1 proyect to analyze the data of the F1 championship making use of the pandas library to handle the data and the matplotlib library to plot different analisys like:
 
