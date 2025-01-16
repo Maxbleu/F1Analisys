@@ -54,8 +54,9 @@ In this case the url would be: [this example](https://f1analisys-production.up.r
 
 <img src="./img/example_get_image_converted.png" alt="ejemplo de obtener un analisis convertido a bytes">
 
-## Coming soon
+## Next steps
 
+- [ ] Refactoring code analisys
 - [ ] Laps comparation in specific session
 - [ ] Average usage throtel
 - [ ] Average usage brake
