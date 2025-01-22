@@ -1,13 +1,22 @@
 import fastf1.plotting
 from timple.timedelta import strftimedelta
-
 import pandas as pd
-
 import matplotlib.pyplot as plt
 
 from enums.process_state import ProcessState
 
 def analisys_fastest_drivers_compound(year: int, round: int, session: str):
+    """
+    Analyzes the fastest drivers each compound in specific session
+
+    Parameters:
+    year (int): The year of the race.
+    round (int): The round number of the race.
+    session (str): The session type (e.g., 'FP1', 'FP2', 'FP3', 'Q', 'R').
+
+    Returns:
+    str: The process state, either 'FAILED' or 'COMPLETED'.
+    """
 
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False)
 

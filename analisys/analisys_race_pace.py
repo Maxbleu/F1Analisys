@@ -1,14 +1,24 @@
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
-
 import seaborn as sns
-
 import fastf1.plotting
 
 from enums.process_state import ProcessState
 from utils.utils import format_time_mmssmmm
 
 def analisys_race_pace(year: int, round: int, session: str):
+    """
+    Analyzes the fastest stints of a race selecting only the top 10 drivers
+
+    Parameters:
+    year (int): The year of the race.
+    round (int): The round number of the race.
+    session (str): The session type (e.g., 'FP1', 'FP2', 'FP3', 'Q', 'R').
+
+    Returns:
+    str: The process state, either 'FAILED' or 'COMPLETED'.
+    """
+
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
                         color_scheme='fastf1')
 

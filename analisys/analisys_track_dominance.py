@@ -1,15 +1,12 @@
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-
-from matplotlib import colormaps
-from matplotlib.colors import ListedColormap
-from matplotlib.collections import LineCollection
 
 import fastf1
 import fastf1.plotting
 
-import random
+import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
+from matplotlib.collections import LineCollection
 
 from enums.process_state import ProcessState
 
@@ -22,6 +19,18 @@ def frase_grafica_qualy(drivers):
     return cadena
 
 def analisys_track_dominance(year, round, session):
+    """
+    Analyzes the track dominance of the top 3 drivers in a specific session.
+
+    Parameters:
+    year (int): The year of the race.
+    round (int): The round number of the race.
+    session (str): The session type (e.g., 'FP1', 'FP2', 'FP3', 'Q', 'R').
+
+    Returns:
+    str: The process state, either 'FAILED' or 'SUCCESS'.
+    """
+
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False, color_scheme='fastf1')
 
     try:

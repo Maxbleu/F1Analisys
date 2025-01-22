@@ -19,14 +19,6 @@ from enums.process_state import ProcessState
 
 app = FastAPI()
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 app.mount("/temp", StaticFiles(directory="temp"), name="temp")
 
 @app.get("/", include_in_schema=False)

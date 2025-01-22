@@ -1,10 +1,21 @@
 import matplotlib.pyplot as plt
-
 import fastf1.plotting
 
 from enums.process_state import ProcessState
 
 def analisys_race_position_evolution(year: int, round: int, session: str):
+    """
+    Analyzes the race position evolution of the drivers in a race session.
+
+    Parameters:
+    year (int): The year of the race.
+    round (int): The round number of the race.
+    session (str): The session type (e.g., 'FP1', 'FP2', 'FP3', 'Q', 'R').
+
+    Returns:
+    str: The process state, either 'FAILED' or 'SUCCESS'.
+    """
+
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
                             color_scheme='fastf1')
 

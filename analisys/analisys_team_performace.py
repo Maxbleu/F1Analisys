@@ -8,6 +8,18 @@ from enums.process_state import ProcessState
 from utils.utils import format_time_mmssmmm
 
 def analisys_team_performace(year: int, round: int, session: str):
+    """
+    Analyzes the team performance in a specific session.
+
+    Parameters:
+    year (int): The year of the race.
+    round (int): The round number of the race.
+    session (str): The session type (e.g., 'FP1', 'FP2', 'FP3', 'Q', 'R').
+
+    Returns:
+    str: The process state, either 'FAILED' or 'SUCCESS'.
+    """
+
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
                             color_scheme='fastf1')
 
