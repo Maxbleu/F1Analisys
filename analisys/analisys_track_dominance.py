@@ -21,9 +21,6 @@ def frase_grafica_qualy(drivers):
         cadena += f"{driver}"
     return cadena
 
-def random_hex_color():
-    return f"#{random.randint(0, 0xFFFFFF):06x}"
-
 def analisys_track_dominance(year, round, session):
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False, color_scheme='fastf1')
 

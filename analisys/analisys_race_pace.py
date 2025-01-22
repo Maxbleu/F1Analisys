@@ -6,11 +6,7 @@ import seaborn as sns
 import fastf1.plotting
 
 from enums.process_state import ProcessState
-
-def format_time_mmssmmm(seconds):
-    minutes = int(seconds // 60)
-    remaining_seconds = seconds % 60
-    return f"{minutes}:{remaining_seconds:06.3f}"
+from utils.utils import format_time_mmssmmm
 
 def analisys_race_pace(year: int, round: int, session: str):
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
@@ -23,15 +19,12 @@ def analisys_race_pace(year: int, round: int, session: str):
 
     session.load()
 
-    point_finishers = session.drivers[:10]
-    
-    laps = session.laps[session.laps["Deleted"] == False]
-    laps.dropna(ignore_index=True)
-    
-    driver_laps = laps.pick_drivers(point_finishers).pick_quicklaps()
-    driver_laps = driver_laps.reset_index()
+    finishing_order = [session.get_driver(i)["Abbreviation"] for i in session.drivers[:10]]
 
-    finishing_order = [session.get_driver(i)["Abbreviation"] for i in point_finishers]
+    laps = session.laps.pick_not_deleted()
+    laps.dropna(ignore_index=True)
+
+    driver_laps = laps.pick_drivers(finishing_order).pick_quicklaps().reset_index()
 
     fig, ax = plt.subplots(figsize=(10, 5))
 
@@ -53,18 +46,17 @@ def analisys_race_pace(year: int, round: int, session: str):
                 order=finishing_order,
                 hue="Compound",
                 palette=fastf1.plotting.get_compound_mapping(session=session),
-                hue_order=["SOFT", "MEDIUM", "HARD", "INTERMEDIATE", "WET"],
+                hue_order=driver_laps["Compound"].unique().tolist(),
                 linewidth=0,
                 size=4,
                 )
-    
+
     ax.set_xlabel("Driver")
     ax.set_ylabel("Lap Time (s)")
     plt.title(f"{session.event['EventName']} {session.event.year} {session.name} | Lap Pace Top 10")
     sns.despine(left=True, bottom=True)
 
     ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: format_time_mmssmmm(x)))
-
     plt.tight_layout()
 
     return ProcessState.COMPLETED.name

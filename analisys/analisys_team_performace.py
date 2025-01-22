@@ -5,11 +5,7 @@ import matplotlib.ticker as ticker
 import fastf1.plotting
 
 from enums.process_state import ProcessState
-
-def format_time_mmssmmm(seconds):
-    minutes = int(seconds // 60)
-    remaining_seconds = seconds % 60
-    return f"{minutes}:{remaining_seconds:06.3f}"
+from utils.utils import format_time_mmssmmm
 
 def analisys_team_performace(year: int, round: int, session: str):
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
