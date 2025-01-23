@@ -2,6 +2,7 @@ import fastf1
 import matplotlib.pyplot as plt
 
 from enums.process_state import ProcessState
+from utils._init_ import get_team_colors
 
 def analisys_top_speed(year, round, session):
     """
@@ -42,17 +43,13 @@ def analisys_top_speed(year, round, session):
 
     df_top_speeds = df_top_speeds.drop_duplicates().reset_index(drop=True)
 
-    team_colors = list()
-    df_teams = df_top_speeds[["Team", "Driver"]].drop_duplicates().reset_index(drop=True)
-    for index, lap in df_teams.iterlaps():
-        color = fastf1.plotting.get_team_color(lap['Team'], session=session)
-        team_colors.append(color)
+    team_colors = get_team_colors(df_top_speeds, session)
 
     fig, ax = plt.subplots(figsize=(10, 8))
 
     bars = ax.bar(df_top_speeds["Driver"], df_top_speeds["TopSpeed"], color=team_colors)
 
-    plt.title(f"{session.event['EventName']} {session.event.year} {session.name} | Top Speed")
+    plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name} | Top Speed")
     plt.xlabel('Drivers')
     plt.ylabel('Speed')
 
@@ -70,5 +67,7 @@ def analisys_top_speed(year, round, session):
             fontsize=10
         )
         iterator += 1
+
+    plt.tight_layout()
 
     return ProcessState.COMPLETED.name

@@ -6,6 +6,7 @@ import fastf1.plotting
 from fastf1.core import Laps
 
 from enums.process_state import ProcessState
+from utils._init_ import get_team_colors
 
 def analisys_fastest_laps(year: int, round: int, session: str):
     """
@@ -42,10 +43,7 @@ def analisys_fastest_laps(year: int, round: int, session: str):
     pole_lap = fastest_laps.pick_fastest()
     fastest_laps['LapTimeDelta'] = fastest_laps['LapTime'] - pole_lap['LapTime']
 
-    team_colors = list()
-    for index, lap in fastest_laps.iterlaps():
-        color = fastf1.plotting.get_team_color(lap['Team'], session=session)
-        team_colors.append(color)
+    team_colors = get_team_colors(fastest_laps, session)
 
     fig, ax = plt.subplots()
     ax.barh(fastest_laps.index, fastest_laps['LapTimeDelta'],
@@ -62,5 +60,6 @@ def analisys_fastest_laps(year: int, round: int, session: str):
 
     plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name}\n"
                 f"Fastest Lap: {lap_time_string} ({pole_lap['Driver']})")
+    plt.tight_layout()
 
     return ProcessState.COMPLETED.name

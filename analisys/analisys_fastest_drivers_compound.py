@@ -4,6 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from enums.process_state import ProcessState
+from utils._init_ import get_team_colors
 
 def analisys_fastest_drivers_compound(year: int, round: int, session: str):
     """
@@ -50,11 +51,7 @@ def analisys_fastest_drivers_compound(year: int, round: int, session: str):
 
     team_colors = {}
     for key, value in compounds_laps.items():
-        colors = []
-        for index, row in value.iterrows():
-            color = fastf1.plotting.get_team_color(row['Team'], session=session)
-            colors.append(color)
-        team_colors[key] = colors
+        team_colors[key] = get_team_colors(value, session)
 
     fig, axes = plt.subplots(1, len(compounds_laps), figsize=(10, 5))
 

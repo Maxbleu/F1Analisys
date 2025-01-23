@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 
 from enums.process_state import ProcessState
+from utils._init_ import get_team_colors
 
 def analisys_lap_time_average(year: int, round: int, session: str):
     """
@@ -32,50 +33,30 @@ def analisys_lap_time_average(year: int, round: int, session: str):
 
     session.laps["LapTime"] = pd.to_timedelta(session.laps["LapTime"])
 
-    #   CREAR EL DATA FRAME
-    df_valid_laps = session.laps[session.laps["Deleted"] == False]
+    df_valid_laps = session.laps.pick_not_deleted()
 
-    drivers = session.laps['Driver'].unique()
-    teams = []
+    drivers = df_valid_laps['Driver'].unique()
+    teams = [session.results.loc[session.results['Abbreviation'] == driver, 'TeamName'].iloc[0] for driver in drivers]
+
+    median_lap_times = []
     for driver in drivers:
-        team_name = session.results.loc[session.results['Abbreviation'] == driver, 'TeamName'][0]
-        teams.append(team_name)
+        driver_laps = df_valid_laps[df_valid_laps['Driver'] == driver]
+        median_lap_time = driver_laps["LapTime"].median().total_seconds()
+        median_lap_times.append(median_lap_time)
+
+    best_median_lap_time = min(median_lap_times)
+    lap_time_diffs = [time - best_median_lap_time for time in median_lap_times]
 
     df_median_lap_time_drivers = pd.DataFrame({
-        'Driver' : drivers, 
-        'Team' : teams,
-    })
+        'Driver': drivers,
+        'Team': teams,
+        'MedianLapTimeDiff': lap_time_diffs
+    }).sort_values(by="MedianLapTimeDiff").reset_index(drop=True)
 
-    #   OBTENER LA MEDIA POR VUELTA DE CADA PILOTO
-    median_lap_time_drivers = []
-    for driver in drivers:
-        driver_laps = df_valid_laps[session.laps['Driver'] == driver]
-        median_driver_lap_time = driver_laps["LapTime"].median()
-        median_driver_lap_time = median_driver_lap_time.total_seconds()
-        median_lap_time_drivers.append(median_driver_lap_time)
+    team_colors = get_team_colors(df_median_lap_time_drivers, session)
 
-    #   OBTENEMOS LA DIFERENCIA FRENTE AL PRIMERO
-    diff_median_lap_time_drivers = []
-    best_median_lap_time = min(median_lap_time_drivers)
-    for median_lap_time in median_lap_time_drivers:
-        diff_median_lap_time = median_lap_time - best_median_lap_time
-        diff_median_lap_time_drivers.append(diff_median_lap_time)
-
-    df_median_lap_time_drivers["MedianLapTime"] = diff_median_lap_time_drivers
-
-    #   CONFIGURAMOS EL DATA FRAME PARA QUE SE MUESTRE LA DIFERENCIA FRENTE AL PRIMERO
-    df_median_lap_time_drivers = df_median_lap_time_drivers.sort_values(by="MedianLapTime")
-    df_median_lap_time_drivers.dropna(inplace=True, ignore_index=True)
-
-    #   OBTENEMOS LOS COLORES DEL EQUIPO
-    team_colors = list()
-    for team in df_median_lap_time_drivers['Team'].values:
-        color = fastf1.plotting.get_team_color(team, session=session)
-        team_colors.append(color)
-
-    #   CONFIGURAMOS LA GRAFICA
     fig, ax = plt.subplots(figsize=(11, 7))
-    bars = ax.barh(df_median_lap_time_drivers.index, df_median_lap_time_drivers["MedianLapTime"], color=team_colors)
+    bars = ax.barh(df_median_lap_time_drivers.index, df_median_lap_time_drivers["MedianLapTimeDiff"], color=team_colors)
     ax.set_yticks(df_median_lap_time_drivers.index)
     ax.set_yticklabels(df_median_lap_time_drivers["Driver"])
 
@@ -83,7 +64,7 @@ def analisys_lap_time_average(year: int, round: int, session: str):
     ax.set_axisbelow(True)
     ax.xaxis.grid(True, which='major', linestyle='--', color='black', zorder=-1000)
 
-    plt.title(f"{session.event['EventName']} {session.event.year} {session.name} | Lap Time Average")
+    plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name} | Lap Time Average")
 
     for bar in bars:
         width = bar.get_width()

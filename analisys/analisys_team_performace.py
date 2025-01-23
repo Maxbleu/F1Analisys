@@ -66,8 +66,7 @@ def analisys_team_performace(year: int, round: int, session: str):
 
     ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: format_time_mmssmmm(x)))
 
-    plt.title(f"{session.event['EventName']} {session.event.year} {session.name} | Team Performance")
-
+    plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name} | Team Performance")
     plt.tight_layout()
 
     return ProcessState.COMPLETED.name
