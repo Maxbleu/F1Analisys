@@ -30,10 +30,7 @@ def analisys_team_performace(year: int, round: int, session: str):
 
     session.load()
 
-    laps = session.laps.pick_quicklaps()
-
-    laps = laps[session.laps["Deleted"] == False]
-
+    laps = session.laps.pick_not_deleted().pick_quicklaps()
     laps.dropna(ignore_index=True)
 
     transformed_laps = laps.copy()

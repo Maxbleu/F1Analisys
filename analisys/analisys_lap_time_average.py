@@ -55,7 +55,7 @@ def analisys_lap_time_average(year: int, round: int, session: str):
 
     team_colors = get_team_colors(df_median_lap_time_drivers, session)
 
-    fig, ax = plt.subplots(figsize=(11, 7))
+    fig, ax = plt.subplots()
     bars = ax.barh(df_median_lap_time_drivers.index, df_median_lap_time_drivers["MedianLapTimeDiff"], color=team_colors)
     ax.set_yticks(df_median_lap_time_drivers.index)
     ax.set_yticklabels(df_median_lap_time_drivers["Driver"])
@@ -66,14 +66,18 @@ def analisys_lap_time_average(year: int, round: int, session: str):
 
     plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name} | Lap Time Average")
 
+    time_diff_to_pole = list()
     for bar in bars:
         width = bar.get_width()
         if(width > 0):
             cadena = f'{width:.2f}'
         else:
             cadena = 'Fastest'
+        time_diff_to_pole.append(width)
 
-        ax.text(width+0.01, bar.get_y() + bar.get_height()/2, cadena, 
+        ax.text(width+0.05, bar.get_y() + bar.get_height()/2, cadena, 
         va='center', ha='left', color='white')
+
+    ax.set_xlim(0, max(time_diff_to_pole) * 1.15)
 
     return ProcessState.COMPLETED.name
