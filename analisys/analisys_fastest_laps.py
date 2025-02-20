@@ -55,6 +55,8 @@ def analisys_fastest_laps(year: int, round: int, session: str):
 
     ax.set_axisbelow(True)
     ax.xaxis.grid(True, which='major', linestyle='--', color='black', zorder=-1000)
+    ax.set_xlabel('Delta to Fastest Lap')
+    ax.set_ylabel('Driver')
 
     lap_time_string = strftimedelta(pole_lap['LapTime'], '%m:%s.%ms')
 
