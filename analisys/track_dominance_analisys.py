@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 from matplotlib.collections import LineCollection
 
+from utils._init_ import get_session
 from enums.process_state import ProcessState
 
 def frase_grafica_qualy(drivers):
@@ -18,14 +19,16 @@ def frase_grafica_qualy(drivers):
         cadena += f"{driver}"
     return cadena
 
-def analisys_track_dominance(year, round, session):
+def track_dominance_analisys(year:int, round:int, session:str, test_number:int, session_number:int):
     """
     Analyzes the track dominance of the top 3 drivers in a specific session.
 
     Parameters:
     year (int): The year of the race.
     round (int): The round number of the race.
-    session (str): The session type (e.g., 'FP1', 'FP2', 'FP3', 'Q', 'R').
+    session (str): The session type (e.g., 'FP1', 'FP2', 'FP3', 'Q', 'S', 'SS', 'SQ', 'R').
+    test_number (int): The test number of the session.
+    session_number (int): The session number of the session.
 
     Returns:
     str: The process state, either 'FAILED' or 'SUCCESS'.
@@ -33,9 +36,8 @@ def analisys_track_dominance(year, round, session):
 
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False, color_scheme='fastf1')
 
-    try:
-        session = fastf1.get_session(year, round, session)
-    except Exception as e:
+    session = get_session(year, round, session, test_number, session_number)
+    if session is None:
         return ProcessState.FAILED.name
 
     session.load()

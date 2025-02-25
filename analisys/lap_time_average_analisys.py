@@ -3,19 +3,20 @@ import fastf1
 import matplotlib.pyplot as plt
 
 import pandas as pd
-import numpy as np
 
 from enums.process_state import ProcessState
-from utils._init_ import get_team_colors
+from utils._init_ import get_team_colors, get_session
 
-def analisys_lap_time_average(year: int, round: int, session: str):
+def lap_time_average_analisys(year: int, round: int, session: str, test_number: int, session_number: int):
     """
     Analyzes the lap time average each drive in specific session
 
     Parameters:
     year (int): The year of the race.
     round (int): The round number of the race.
-    session (str): The session type (e.g., 'FP1', 'FP2', 'FP3', 'Q', 'R').
+    session (str): The session type (e.g., 'FP1', 'FP2', 'FP3', 'Q', 'S', 'SS', 'SQ', 'R').
+    test_number (int): The test number of the session.
+    session_number (int): The session number of the session.
 
     Returns:
     str: The process state, either 'FAILED' or 'SUCCESS'.
@@ -24,16 +25,15 @@ def analisys_lap_time_average(year: int, round: int, session: str):
     fastf1.plotting.setup_mpl(mpl_timedelta_support=True, misc_mpl_mods=False,
                             color_scheme='fastf1')
 
-    try:
-        session = fastf1.get_session(year, round, session)
-    except Exception as e:
+    session = get_session(year, round, session, test_number, session_number)
+    if session is None:
         return ProcessState.FAILED.name
 
     session.load()
 
     session.laps["LapTime"] = pd.to_timedelta(session.laps["LapTime"])
 
-    df_valid_laps = session.laps.pick_not_deleted()
+    df_valid_laps = session.laps
 
     drivers = df_valid_laps['Driver'].unique()
     teams = [session.results.loc[session.results['Abbreviation'] == driver, 'TeamName'].iloc[0] for driver in drivers]
@@ -79,5 +79,7 @@ def analisys_lap_time_average(year: int, round: int, session: str):
         va='center', ha='left', color='white')
 
     ax.set_xlim(0, max(time_diff_to_pole) * 1.15)
+
+    plt.tight_layout()
 
     return ProcessState.COMPLETED.name

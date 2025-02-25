@@ -4,35 +4,34 @@ import seaborn as sns
 import fastf1.plotting
 
 from enums.process_state import ProcessState
-from utils.utils import format_time_mmssmmm
+from utils._init_ import format_time_mmssmmm, get_session
 
-def analisys_race_pace(year: int, round: int, session: str):
+def lap_time_distribution_analisys(year: int, round: int, session: str):
     """
     Analyzes the fastest stints of a race selecting only the top 10 drivers
 
     Parameters:
     year (int): The year of the race.
     round (int): The round number of the race.
-    session (str): The session type (e.g., 'FP1', 'FP2', 'FP3', 'Q', 'R').
+    session (str): The session type (e.g., 'FP1', 'FP2', 'FP3', 'Q', 'S', 'SS', 'SQ', 'R').
+    test_number (int): The test number of the session.
+    session_number (int): The session number of the session.
 
     Returns:
     str: The process state, either 'FAILED' or 'COMPLETED'.
     """
 
-    fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
-                        color_scheme='fastf1')
+    fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False, color_scheme='fastf1')
 
-    try:
-        session = fastf1.get_session(year, round, session)
-    except Exception as e:
-        return ProcessState.FAILED.name
+    session = get_session(year, round, session)
+    if session is None:
+        return ProcessState.FAILED
 
     session.load()
 
-    finishing_order = [session.get_driver(i)["Abbreviation"] for i in session.drivers[:10]]
+    finishing_order = session.results.iloc[0:10]['Abbreviation'].tolist()
 
-    laps = session.laps.pick_not_deleted()
-    laps.dropna(ignore_index=True)
+    laps = session.laps
 
     driver_laps = laps.pick_drivers(finishing_order).pick_quicklaps().reset_index()
 
@@ -49,6 +48,9 @@ def analisys_race_pace(year: int, round: int, session: str):
                 order=finishing_order,
                 palette=fastf1.plotting.get_driver_color_mapping(session=session)
                 )
+
+    print(fastf1.plotting.get_compound_mapping(session=session))
+    print(driver_laps["Compound"].unique().tolist())
 
     sns.swarmplot(data=driver_laps,
                 x="Driver",

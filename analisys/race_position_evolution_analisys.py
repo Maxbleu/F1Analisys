@@ -2,15 +2,16 @@ import matplotlib.pyplot as plt
 import fastf1.plotting
 
 from enums.process_state import ProcessState
+from utils._init_ import get_session
 
-def analisys_race_position_evolution(year: int, round: int, session: str):
+def race_position_evolution_analisys(year: int, round: int, session: str):
     """
     Analyzes the race position evolution of the drivers in a race session.
 
     Parameters:
     year (int): The year of the race.
     round (int): The round number of the race.
-    session (str): The session type (e.g., 'FP1', 'FP2', 'FP3', 'Q', 'R').
+    session (str): The session type (e.g., 'FP1', 'FP2', 'FP3', 'Q', 'S', 'SS', 'SQ', 'R').
 
     Returns:
     str: The process state, either 'FAILED' or 'SUCCESS'.
@@ -19,11 +20,9 @@ def analisys_race_position_evolution(year: int, round: int, session: str):
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
                             color_scheme='fastf1')
 
-    try:
-        if session != "R": return ProcessState.CANCELED.name
-        session = fastf1.get_session(year, round, session)
-    except Exception as e:
-        return ProcessState.FAILED.name
+    if session != "R": return ProcessState.CANCELED.name
+    session = get_session(year, round, session)
+    if session is None: return ProcessState.FAILED.name
 
     session.load()
 

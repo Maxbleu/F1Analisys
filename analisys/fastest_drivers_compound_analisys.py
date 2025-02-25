@@ -4,16 +4,18 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from enums.process_state import ProcessState
-from utils._init_ import get_team_colors
+from utils._init_ import get_team_colors, get_session
 
-def analisys_fastest_drivers_compound(year: int, round: int, session: str):
+def fastest_drivers_compound_analisys(year: int, round: int, session: str, test_number: int, session_number: int):
     """
     Analyzes the fastest drivers each compound in specific session
 
     Parameters:
     year (int): The year of the race.
     round (int): The round number of the race.
-    session (str): The session type (e.g., 'FP1', 'FP2', 'FP3', 'Q', 'R').
+    session (str): The session type (e.g., 'FP1', 'FP2', 'FP3', 'Q', 'S', 'SS', 'SQ', 'R').
+    test_number (int): The test number of the session.
+    session_number (int): The session number of the session.
 
     Returns:
     str: The process state, either 'FAILED' or 'COMPLETED'.
@@ -21,16 +23,15 @@ def analisys_fastest_drivers_compound(year: int, round: int, session: str):
 
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False)
 
-    try:
-        session = fastf1.get_session(year, round, session)
-    except Exception as e:
+    session = get_session(year, round, session, test_number, session_number)
+    if session is None:
         return ProcessState.FAILED.name
 
     session.load()
 
     session.laps["LapTime"] = pd.to_timedelta(session.laps["LapTime"])
 
-    session_laps = session.laps.pick_not_deleted()
+    session_laps = session.laps
 
     avg_lap_times = session_laps.groupby(["Driver","Team", "Compound"])["LapTime"].mean().reset_index()
     avg_lap_times.rename(columns={"LapTime": "AvgLapTime"}, inplace=True)
@@ -42,9 +43,10 @@ def analisys_fastest_drivers_compound(year: int, round: int, session: str):
         
         total_laps = session_laps[session_laps['Compound'] == compound].groupby(["Driver"])["LapTime"].count()
         compound_laps["TotalLaps"] = compound_laps["Driver"].map(total_laps)
-        
-        compound_laps = compound_laps.sort_values(by="AvgLapTime", ascending=True).reset_index(drop=True)
         compound_laps = compound_laps.dropna()
+        
+        if compound_laps.empty: continue
+        compound_laps = compound_laps.sort_values(by="AvgLapTime", ascending=True).reset_index(drop=True)
         
         compound_laps["AvgLapTimeDiff"] = compound_laps["AvgLapTime"] - compound_laps["AvgLapTime"].iloc[0]
         compounds_laps[compound] = compound_laps

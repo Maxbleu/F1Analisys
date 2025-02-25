@@ -1,20 +1,18 @@
 from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
-from analisys._init_ import analisys_track_dominance
-from analisys._init_ import analisys_top_speed
-from analisys._init_ import analisys_lap_time_average
-from analisys._init_ import analisys_team_performace
-from analisys._init_ import analisys_race_pace
-from analisys._init_ import analisys_fastest_laps
-from analisys._init_ import analisys_race_position_evolution
-from analisys._init_ import analisys_fastest_drivers_compound
+from analisys._init_ import track_dominance_analisys
+from analisys._init_ import top_speed_analisys
+from analisys._init_ import lap_time_average_analisys
+from analisys._init_ import team_performace_analisys
+from analisys._init_ import lap_time_distribution_analisys
+from analisys._init_ import fastest_laps_analisys
+from analisys._init_ import race_position_evolution_analisys
+from analisys._init_ import fastest_drivers_compound_analisys
 
 from utils._init_ import convert_img_to_bytes
 from utils._init_ import save_img
-
 from enums.process_state import ProcessState
 
 app = FastAPI()
@@ -25,10 +23,18 @@ app.mount("/temp", StaticFiles(directory="temp"), name="temp")
 def redirect_to_docs():
     return RedirectResponse(url="/docs")
 
-@app.get("/analisys/track_dominance/{year}/{round}/{session}", tags=["Análisis sesiones"])
-def get_track_dominance(year: int, round: int, session: str, convert_img: bool = True):
+@app.get("/pretest/track_dominance/{year}/{test_number}/{session_number}", tags=["Pretesting sessions"])
+@app.get("/official/track_dominance/{year}/{round}/{session}", tags=["Oficial sessions"])
+def get_track_dominance(
+    year: int, 
+    round: int = None,
+    session: str = None, 
+    test_number: int = None,
+    session_number: int = None,
+    convert_img: bool = True
+    ):
 
-    result = analisys_track_dominance(year, round, session)
+    result = track_dominance_analisys(year, round, session, test_number, session_number)
     if result == ProcessState.FAILED.name:
         raise HTTPException(
             status_code=400,
@@ -41,10 +47,18 @@ def get_track_dominance(year: int, round: int, session: str, convert_img: bool =
     return_thing = convert_img_to_bytes() if convert_img else save_img()
     return return_thing
 
-@app.get("/analisys/top_speed/{year}/{round}/{session}", tags=["Análisis sesiones"])
-def get_top_speed(year: int, round: int, session: str, convert_img: bool = True):
+@app.get("/pretest/top_speed/{year}/{test_number}/{session_number}", tags=["Pretesting sessions"])
+@app.get("/official/top_speed/{year}/{round}/{session}", tags=["Oficial sessions"])
+def get_top_speed(
+    year: int, 
+    round: int = None, 
+    session: str = None,
+    test_number: int = None,
+    session_number: int = None,
+    convert_img: bool = True
+    ):
 
-    result = analisys_top_speed(year, round, session)
+    result = top_speed_analisys(year, round, session, test_number, session_number)
     if result == ProcessState.FAILED.name:
         raise HTTPException(
             status_code=400,
@@ -57,10 +71,18 @@ def get_top_speed(year: int, round: int, session: str, convert_img: bool = True)
     return_thing = convert_img_to_bytes() if convert_img else save_img()
     return return_thing
 
-@app.get("/analisys/lap_time_average/{year}/{round}/{session}", tags=["Análisis sesiones"])
-def get_lap_time_average(year: int, round: int, session: str, convert_img: bool = True):
+@app.get("/pretest/lap_time_average/{year}/{test_number}/{session_number}", tags=["Pretesting sessions"])
+@app.get("/official/lap_time_average/{year}/{round}/{session}", tags=["Oficial sessions"])
+def get_lap_time_average(
+    year: int, 
+    round: int = None, 
+    session: str = None,
+    test_number: int = None,
+    session_number: int = None, 
+    convert_img: bool = True
+    ):
 
-    result = analisys_lap_time_average(year, round, session)
+    result = lap_time_average_analisys(year, round, session, test_number, session_number)
     if result == ProcessState.FAILED.name:
         raise HTTPException(
             status_code=400,
@@ -73,10 +95,18 @@ def get_lap_time_average(year: int, round: int, session: str, convert_img: bool 
     return_thing = convert_img_to_bytes() if convert_img else save_img()
     return return_thing
 
-@app.get("/analisys/team_performace/{year}/{round}/{session}", tags=["Análisis sesiones"])
-def get_team_performace(year: int, round: int, session: str, convert_img: bool = True):
+@app.get("/pretest/team_performace/{year}/{test_number}/{session_number}", tags=["Pretesting sessions"])
+@app.get("/official/team_performace/{year}/{round}/{session}", tags=["Oficial sessions"])
+def get_team_performace(
+    year: int, 
+    round: int = None,
+    session: str = None,
+    test_number: int = None,
+    session_number: int = None, 
+    convert_img: bool = True
+    ):
 
-    result = analisys_team_performace(year, round, session)
+    result = team_performace_analisys(year, round, session, test_number, session_number)
     if result == ProcessState.FAILED.name:
         raise HTTPException(
             status_code=400,
@@ -89,10 +119,15 @@ def get_team_performace(year: int, round: int, session: str, convert_img: bool =
     return_thing = convert_img_to_bytes() if convert_img else save_img()
     return return_thing
 
-@app.get("/analisys/race_pace/{year}/{round}/{session}", tags=["Análisis sesiones"])
-def get_race_pace(year: int, round: int, session: str, convert_img: bool = True):
+@app.get("/official/lap_time_distribution/{year}/{round}/{session}", tags=["Oficial sessions"])
+def get_lap_time_distribution(
+    year: int, 
+    round: int = None, 
+    session: str = None,
+    convert_img: bool = True
+    ):
 
-    result = analisys_race_pace(year, round, session)
+    result = lap_time_distribution_analisys(year, round, session)
     if result == ProcessState.FAILED.name:
         raise HTTPException(
             status_code=400,
@@ -105,10 +140,18 @@ def get_race_pace(year: int, round: int, session: str, convert_img: bool = True)
     return return_thing
 
 #   REVISAR EL ERROR VUELTAS RAPIDAS EN AGUA http://localhost:8000/analisys/fastest_laps/2024/15/FP3
-@app.get("/analisys/fastest_laps/{year}/{round}/{session}", tags=["Análisis sesiones"])
-def get_fastest_laps(year: int, round: int, session: str, convert_img: bool = True):
+@app.get("/pretest/fastest_laps/{year}/{test_number}/{session_number}", tags=["Pretesting sessions"])
+@app.get("/official/fastest_laps/{year}/{round}/{session}", tags=["Oficial sessions"])
+def get_fastest_laps(
+    year: int, 
+    round: int = None, 
+    session: str = None,
+    test_number: int = None,
+    session_number: int = None,
+    convert_img: bool = True
+    ):
 
-    result = analisys_fastest_laps(year, round, session)
+    result = fastest_laps_analisys(year, round, session, test_number, session_number)
     if result == ProcessState.FAILED.name:
         raise HTTPException(
             status_code=400,
@@ -121,10 +164,10 @@ def get_fastest_laps(year: int, round: int, session: str, convert_img: bool = Tr
     return return_thing
 
 #   AÑADIR TABLA DE STINTS EN LA DERECHA O IZQUIERDA DE LA GRAFICA
-@app.get("/analisys/race_position_evolution/{year}/{round}/{session}", tags=["Análisis sesiones"])
+@app.get("/official/race_position_evolution/{year}/{round}/{session}", tags=["Oficial sessions"])
 def get_race_position_evolution(year: int, round: int, session: str, convert_img: bool = True):
 
-    result = analisys_race_position_evolution(year, round, session)
+    result = race_position_evolution_analisys(year, round, session)
     if result == ProcessState.FAILED.name or result == ProcessState.CANCELED.name:
 
         if result == ProcessState.FAILED.name: message = "La sesión de carrera no existe. Asegúrate de que el año, la ronda sean correctos."
@@ -141,10 +184,18 @@ def get_race_position_evolution(year: int, round: int, session: str, convert_img
     return_thing = convert_img_to_bytes() if convert_img else save_img()
     return return_thing
 
-@app.get("/analisys/fastest_drivers_compound/{year}/{round}/{session}", tags=["Análisis sesiones"])
-def get_fastest_drivers_compound(year: int, round: int, session: str, convert_img: bool = True):
+@app.get("/pretest/fastest_drivers_compound/{year}/{test_number}/{session_number}", tags=["Pretesting sessions"])
+@app.get("/official/fastest_drivers_compound/{year}/{round}/{session}", tags=["Oficial sessions"])
+def get_fastest_drivers_compound(
+    year: int, 
+    round: int = None,
+    session: str = None,
+    test_number: int = None,
+    session_number: int = None,
+    convert_img: bool = True
+    ):
 
-    result = analisys_fastest_drivers_compound(year, round, session)
+    result = fastest_drivers_compound_analisys(year, round, session, test_number, session_number)
     if result == ProcessState.FAILED.name:
         raise HTTPException(
             status_code=400,

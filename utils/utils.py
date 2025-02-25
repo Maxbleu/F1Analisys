@@ -8,8 +8,6 @@ import numpy as np
 import os
 from PIL import Image
 
-import fastf1.plotting
-
 def format_time_mmssmmm(seconds):
     minutes = int(seconds // 60)
     remaining_seconds = seconds % 60
@@ -39,10 +37,3 @@ def save_img():
     plt.savefig(file_path)
     plt.close()
     return RedirectResponse(url="/temp/plot_saved.png")
-
-def get_team_colors(df, session):
-    team_colors = list()
-    for team in df['Team'].values:
-        color = fastf1.plotting.get_team_color(team, session=session)
-        team_colors.append(color)
-    return team_colors
