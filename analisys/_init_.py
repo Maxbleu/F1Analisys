@@ -6,3 +6,4 @@ from .lap_time_average_analisys import lap_time_average_analisys
 from .top_speed_analisys import top_speed_analisys
 from .track_dominance_analisys import track_dominance_analisys
 from .fastest_drivers_compound_analisys import fastest_drivers_compound_analisys
+from .comparative_lap_time_analisys import comparative_lap_time_analisys

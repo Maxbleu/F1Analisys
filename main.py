@@ -10,6 +10,7 @@ from analisys._init_ import lap_time_distribution_analisys
 from analisys._init_ import fastest_laps_analisys
 from analisys._init_ import race_position_evolution_analisys
 from analisys._init_ import fastest_drivers_compound_analisys
+from analisys._init_ import comparative_lap_time_analisys
 
 from utils._init_ import convert_img_to_bytes
 from utils._init_ import save_img
@@ -208,6 +209,37 @@ def get_fastest_drivers_compound(
                 "error": "Sesión no encontrada.",
                 "message": "La sesión solicitada no existe. Asegúrate de que el año, la ronda y la sesión sean correctos.",
             }
+        )
+    return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
+    return return_thing
+
+@app.get("/pretest/comparative_lap_time/{year}/{round}/{session}/compare/{piloto1}/{vuelta_piloto1}/vs/{piloto2}/{vuelta_piloto2}", tags=["Pretesting sessions"])
+@app.get("/official/comparative_lap_time/{year}/{round}/{session}/compare/{piloto1}/{vuelta_piloto1}/vs/{piloto2}/{vuelta_piloto2}", tags=["Oficial sessions"])
+def get_comparative_lap_time(
+    year: int,
+    round: int = None,
+    session: str = None,
+    test_number: int = None,
+    session_number: int = None,
+    piloto1: str = None,
+    vuelta_piloto1: int = None,
+    piloto2: str = None,
+    vuelta_piloto2: int = None,
+    convert_to_bytes : bool = False
+    ):
+
+    vueltas_pilotos = {
+        piloto1: vuelta_piloto1,
+        piloto2: vuelta_piloto2
+    }
+    resuls = comparative_lap_time_analisys(year, round, session, test_number, session_number, vueltas_pilotos)
+    if resuls == ProcessState.FAILED.name:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": "Error.",
+                "message": "La sesión solicitada o vueltas seleccionadas no existen.",
+                }
         )
     return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing
