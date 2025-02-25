@@ -9,7 +9,7 @@ F1 project to analyze the data of the F1 championship making use of the pandas l
 - Track dominance ![Sesión Oficial](https://img.shields.io/badge/-Official-blue) ![Sesión Oficial](https://img.shields.io/badge/-Pretesting-red)
 - Top speed ![Sesión Oficial](https://img.shields.io/badge/-Official-blue) ![Sesión Oficial](https://img.shields.io/badge/-Pretesting-red)
 - Lap time average ![Sesión Oficial](https://img.shields.io/badge/-Official-blue) ![Sesión Oficial](https://img.shields.io/badge/-Pretesting-red)
-- Race pace ![Sesión Oficial](https://img.shields.io/badge/-Official-blue)
+- Lap time distribution ![Sesión Oficial](https://img.shields.io/badge/-Official-blue)
 - Team performance ![Sesión Oficial](https://img.shields.io/badge/-Official-blue) ![Sesión Oficial](https://img.shields.io/badge/-Pretesting-red)
 - Fastest laps ![Sesión Oficial](https://img.shields.io/badge/-Official-blue) ![Sesión Oficial](https://img.shields.io/badge/-Pretesting-red)
 - Race position evolution ![Sesión Oficial](https://img.shields.io/badge/-Races-orange)
