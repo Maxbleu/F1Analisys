@@ -2,15 +2,6 @@
 
 ![Estado](https://img.shields.io/badge/Status-developing-yellow) ![Framework](https://img.shields.io/badge/Framework-FastAPI-red) ![Licencia](https://img.shields.io/badge/Licencia-MIT-yellow)
 
-1. [Descripción](#descripción)
-2. [Instalation](#instalation)
-3. [Run](#run)
-4. [Get analisys](#get-analisys)
-5. [Swagger](#swagger)
-6. [Contributing](#contributing)
-
-# Description
-
 <img src="./img/banner_repository.png" alt="Banner principal del proyecto">
 
 F1 project to analyze the data of the F1 championship making use of the pandas library to handle the data and the matplotlib library to plot different analisys like:
@@ -23,6 +14,14 @@ F1 project to analyze the data of the F1 championship making use of the pandas l
 - Fastest laps ![Sesión Oficial](https://img.shields.io/badge/-Official-blue) ![Sesión Oficial](https://img.shields.io/badge/-Pretesting-red)
 - Race position evolution ![Sesión Oficial](https://img.shields.io/badge/-Races-orange)
 - Fatest drivers each compound ![Sesión Oficial](https://img.shields.io/badge/-Official-blue) ![Sesión Oficial](https://img.shields.io/badge/-Pretesting-red)
+
+# Sections
+1. [Instalation](#instalation)
+2. [Run](#run)
+3. [Get analisys](#get-analisys)
+4. [Swagger](#swagger)
+5. [Contributing](#contributing)
+
 
 ## Instalation
 
