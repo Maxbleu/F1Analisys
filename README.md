@@ -14,6 +14,7 @@ F1 project to analyze the data of the F1 championship making use of the pandas l
 - Fastest laps ![Sesión Oficial](https://img.shields.io/badge/-Official-blue) ![Sesión Oficial](https://img.shields.io/badge/-Pretesting-red)
 - Race position evolution ![Sesión Oficial](https://img.shields.io/badge/-Races-orange)
 - Fatest drivers each compound ![Sesión Oficial](https://img.shields.io/badge/-Official-blue) ![Sesión Oficial](https://img.shields.io/badge/-Pretesting-red)
+- Comparative lap time ![Sesión Oficial](https://img.shields.io/badge/-Official-blue) ![Sesión Oficial](https://img.shields.io/badge/-Pretesting-red)
 
 # Sections
 1. [Instalation](#instalation)
