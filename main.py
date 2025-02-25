@@ -31,7 +31,7 @@ def get_track_dominance(
     session: str = None, 
     test_number: int = None,
     session_number: int = None,
-    convert_img: bool = True
+    convert_to_bytes: bool = False
     ):
 
     result = track_dominance_analisys(year, round, session, test_number, session_number)
@@ -44,7 +44,7 @@ def get_track_dominance(
             }
         )
 
-    return_thing = convert_img_to_bytes() if convert_img else save_img()
+    return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing
 
 @app.get("/pretest/top_speed/{year}/{test_number}/{session_number}", tags=["Pretesting sessions"])
@@ -55,7 +55,7 @@ def get_top_speed(
     session: str = None,
     test_number: int = None,
     session_number: int = None,
-    convert_img: bool = True
+    convert_to_bytes: bool = False
     ):
 
     result = top_speed_analisys(year, round, session, test_number, session_number)
@@ -68,7 +68,7 @@ def get_top_speed(
             }
         )
 
-    return_thing = convert_img_to_bytes() if convert_img else save_img()
+    return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing
 
 @app.get("/pretest/lap_time_average/{year}/{test_number}/{session_number}", tags=["Pretesting sessions"])
@@ -79,7 +79,7 @@ def get_lap_time_average(
     session: str = None,
     test_number: int = None,
     session_number: int = None, 
-    convert_img: bool = True
+    convert_to_bytes: bool = False
     ):
 
     result = lap_time_average_analisys(year, round, session, test_number, session_number)
@@ -92,7 +92,7 @@ def get_lap_time_average(
             }
         )
 
-    return_thing = convert_img_to_bytes() if convert_img else save_img()
+    return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing
 
 @app.get("/pretest/team_performace/{year}/{test_number}/{session_number}", tags=["Pretesting sessions"])
@@ -103,7 +103,7 @@ def get_team_performace(
     session: str = None,
     test_number: int = None,
     session_number: int = None, 
-    convert_img: bool = True
+    convert_to_bytes: bool = False
     ):
 
     result = team_performace_analisys(year, round, session, test_number, session_number)
@@ -116,7 +116,7 @@ def get_team_performace(
             }
         )
 
-    return_thing = convert_img_to_bytes() if convert_img else save_img()
+    return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing
 
 @app.get("/official/lap_time_distribution/{year}/{round}/{session}", tags=["Oficial sessions"])
@@ -124,7 +124,7 @@ def get_lap_time_distribution(
     year: int, 
     round: int = None, 
     session: str = None,
-    convert_img: bool = True
+    convert_to_bytes: bool = False
     ):
 
     result = lap_time_distribution_analisys(year, round, session)
@@ -136,10 +136,10 @@ def get_lap_time_distribution(
                 "message": "La sesión solicitada no existe. Asegúrate de que el año, la ronda y la sesión sean correctos.",
             }
         )
-    return_thing = convert_img_to_bytes() if convert_img else save_img()
+    return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing
 
-#   REVISAR EL ERROR VUELTAS RAPIDAS EN AGUA http://localhost:8000/analisys/fastest_laps/2024/15/FP3
+#   REVISAR EL ERROR VUELTAS RAPIDAS EN AGUA http://localhost:8000/official/fastest_laps/2024/15/FP3
 @app.get("/pretest/fastest_laps/{year}/{test_number}/{session_number}", tags=["Pretesting sessions"])
 @app.get("/official/fastest_laps/{year}/{round}/{session}", tags=["Oficial sessions"])
 def get_fastest_laps(
@@ -148,7 +148,7 @@ def get_fastest_laps(
     session: str = None,
     test_number: int = None,
     session_number: int = None,
-    convert_img: bool = True
+    convert_to_bytes: bool = False
     ):
 
     result = fastest_laps_analisys(year, round, session, test_number, session_number)
@@ -160,12 +160,17 @@ def get_fastest_laps(
                 "message": "La sesión solicitada no existe. Asegúrate de que el año, la ronda y la sesión sean correctos.",
             }
         )
-    return_thing = convert_img_to_bytes() if convert_img else save_img()
+    return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing
 
 #   AÑADIR TABLA DE STINTS EN LA DERECHA O IZQUIERDA DE LA GRAFICA
 @app.get("/official/race_position_evolution/{year}/{round}/{session}", tags=["Oficial sessions"])
-def get_race_position_evolution(year: int, round: int, session: str, convert_img: bool = True):
+def get_race_position_evolution(
+    year: int, 
+    round: int, 
+    session: str, 
+    convert_to_bytes: bool = False
+    ):
 
     result = race_position_evolution_analisys(year, round, session)
     if result == ProcessState.FAILED.name or result == ProcessState.CANCELED.name:
@@ -181,7 +186,7 @@ def get_race_position_evolution(year: int, round: int, session: str, convert_img
             }
         )
 
-    return_thing = convert_img_to_bytes() if convert_img else save_img()
+    return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing
 
 @app.get("/pretest/fastest_drivers_compound/{year}/{test_number}/{session_number}", tags=["Pretesting sessions"])
@@ -192,7 +197,7 @@ def get_fastest_drivers_compound(
     session: str = None,
     test_number: int = None,
     session_number: int = None,
-    convert_img: bool = True
+    convert_to_bytes: bool = False
     ):
 
     result = fastest_drivers_compound_analisys(year, round, session, test_number, session_number)
@@ -204,5 +209,5 @@ def get_fastest_drivers_compound(
                 "message": "La sesión solicitada no existe. Asegúrate de que el año, la ronda y la sesión sean correctos.",
             }
         )
-    return_thing = convert_img_to_bytes() if convert_img else save_img()
+    return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing

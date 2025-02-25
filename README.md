@@ -1,17 +1,28 @@
 # F1Analisys
 
+![Estado](https://img.shields.io/badge/Status-developing-yellow) ![Framework](https://img.shields.io/badge/Framework-FastAPI-red) ![Licencia](https://img.shields.io/badge/Licencia-MIT-yellow)
+
+1. [Descripción](#descripción)
+2. [Instalation](#instalation)
+3. [Run](#run)
+4. [Get analisys](#get-analisys)
+5. [Swagger](#swagger)
+6. [Contributing](#contributing)
+
+# Description
+
 <img src="./img/banner_repository.png" alt="Banner principal del proyecto">
 
 F1 project to analyze the data of the F1 championship making use of the pandas library to handle the data and the matplotlib library to plot different analisys like:
 
-- Track dominance
-- Top speed
-- Lap time average
-- Race pace
-- Team performance
-- Fastest laps
-- Race position evolution
-- Fatest drivers each compound
+- Track dominance ![Sesión Oficial](https://img.shields.io/badge/-Official-blue) ![Sesión Oficial](https://img.shields.io/badge/-Pretesting-red)
+- Top speed ![Sesión Oficial](https://img.shields.io/badge/-Official-blue) ![Sesión Oficial](https://img.shields.io/badge/-Pretesting-red)
+- Lap time average ![Sesión Oficial](https://img.shields.io/badge/-Official-blue) ![Sesión Oficial](https://img.shields.io/badge/-Pretesting-red)
+- Race pace ![Sesión Oficial](https://img.shields.io/badge/-Official-blue)
+- Team performance ![Sesión Oficial](https://img.shields.io/badge/-Official-blue) ![Sesión Oficial](https://img.shields.io/badge/-Pretesting-red)
+- Fastest laps ![Sesión Oficial](https://img.shields.io/badge/-Official-blue) ![Sesión Oficial](https://img.shields.io/badge/-Pretesting-red)
+- Race position evolution ![Sesión Oficial](https://img.shields.io/badge/-Races-orange)
+- Fatest drivers each compound ![Sesión Oficial](https://img.shields.io/badge/-Official-blue) ![Sesión Oficial](https://img.shields.io/badge/-Pretesting-red)
 
 ## Instalation
 
@@ -36,25 +47,27 @@ python -m uvicorn main:app --reload
 ```
 
 
-## Usage
+## Get analisys
 
 This project is designed to get every analisys named before for normal persons out of the tech word interested in the technical part of F1 and developers.
 
-In every endpoint of this project, after the url, you can put if you want convert the image to bytes or not, if you don't want to convert the image to bytes, you need to put `?convert_img=False` in the url, because, this option is enabled by default. 
+In every endpoint of this project, after the url, you can put if you want convert the image to bytes putting 
+`?convert_img=True` in the url, because, `?convert_img=False` is enabled by default. 
 
-### Usage to convert image
+### In image
 
-#### `/analisys/track_dominance/2024/10/Q?convert_img=False`
-In this case the url would be: [this example](https://f1analisys-production.up.railway.app/analisys/track_dominance/2024/10/Q?convert_img=False)
+#### `/official/track_dominance/2024/10/Q?convert_img=False` or `/official/track_dominance/2024/10/Q`
+In this case the url would be: [this example](https://f1analisys-production.up.railway.app/official/track_dominance/2024/10/Q)
 
 <img src="./img/example_get_image_not_converted.png" alt="ejemplo de obtener un analisis sin convertir a bytes">
 
-#### `/analisys/track_dominance/2024/10/Q`
-In this case the url would be: [this example](https://f1analisys-production.up.railway.app/analisys/track_dominance/2024/10/Q)
+### In bytes
+#### `/official/track_dominance/2024/10/Q?convert_img=True`
+In this case the url would be: [this example](https://f1analisys-production.up.railway.app/official/track_dominance/2024/10/Q?convert_img=True)
 
 <img src="./img/example_get_image_converted.png" alt="ejemplo de obtener un analisis convertido a bytes">
 
-## Documentation
+## Swagger
 
 To see the endpoints of the project you only need to [this link](https://f1analisys-production.up.railway.app/)
 
