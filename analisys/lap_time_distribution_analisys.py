@@ -3,8 +3,7 @@ import matplotlib.ticker as ticker
 import seaborn as sns
 import fastf1.plotting
 
-from enums.process_state import ProcessState
-from utils._init_ import format_time_mmssmmm, get_session
+from utils._init_ import format_time_mmssmmm, get_session, try_get_session_laps
 
 def lap_time_distribution_analisys(year: int, round: int, session: str):
     """
@@ -16,22 +15,14 @@ def lap_time_distribution_analisys(year: int, round: int, session: str):
     session (str): The session type (e.g., 'FP1', 'FP2', 'FP3', 'Q', 'S', 'SS', 'SQ', 'R').
     test_number (int): The test number of the session.
     session_number (int): The session number of the session.
-
-    Returns:
-    str: The process state, either 'FAILED' or 'COMPLETED'.
     """
 
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False, color_scheme='fastf1')
 
     session = get_session(year, round, session)
-    if session is None:
-        return ProcessState.FAILED
-
-    session.load()
+    laps = try_get_session_laps(session=session)
 
     finishing_order = session.results.iloc[0:10]['Abbreviation'].tolist()
-
-    laps = session.laps
 
     driver_laps = laps.pick_drivers(finishing_order).pick_quicklaps().reset_index()
 
@@ -69,6 +60,3 @@ def lap_time_distribution_analisys(year: int, round: int, session: str):
     sns.despine(left=True, bottom=True)
 
     ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: format_time_mmssmmm(x)))
-    plt.tight_layout()
-
-    return ProcessState.COMPLETED.name

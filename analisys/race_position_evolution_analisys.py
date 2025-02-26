@@ -1,8 +1,7 @@
 import matplotlib.pyplot as plt
 import fastf1.plotting
 
-from enums.process_state import ProcessState
-from utils._init_ import get_session
+from utils._init_ import get_session, send_error_message, try_get_session_laps
 
 def race_position_evolution_analisys(year: int, round: int, session: str):
     """
@@ -11,25 +10,20 @@ def race_position_evolution_analisys(year: int, round: int, session: str):
     Parameters:
     year (int): The year of the race.
     round (int): The round number of the race.
-    session (str): The session type (e.g., 'FP1', 'FP2', 'FP3', 'Q', 'S', 'SS', 'SQ', 'R').
-
-    Returns:
-    str: The process state, either 'FAILED' or 'SUCCESS'.
+    session (str): The session type ('R').
     """
 
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
                             color_scheme='fastf1')
 
-    if session != "R": return ProcessState.CANCELED.name
+    if session != "R": send_error_message(status_code=400, title="Solo carreras", message="Esta gráfico solo está disponible para carreras")
     session = get_session(year, round, session)
-    if session is None: return ProcessState.FAILED.name
+    laps = try_get_session_laps(session=session)
 
-    session.load()
-
-    fig, ax = plt.subplots(figsize=(8.0, 4.9))
+    fig, ax = plt.subplots(figsize=(10.0, 6))
 
     for drv in session.drivers:
-        drv_laps = session.laps.pick_driver(drv)
+        drv_laps = laps.pick_driver(drv)
 
         abb = drv_laps['Driver'].iloc[0]
         style = fastf1.plotting.get_driver_style(identifier=abb,
@@ -46,6 +40,3 @@ def race_position_evolution_analisys(year: int, round: int, session: str):
 
     ax.legend(bbox_to_anchor=(1.0, 1.02))
     plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name} | Results")
-    plt.tight_layout()
-
-    return ProcessState.COMPLETED.name

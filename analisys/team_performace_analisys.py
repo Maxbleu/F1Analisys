@@ -4,8 +4,7 @@ import matplotlib.ticker as ticker
 
 import fastf1.plotting
 
-from enums.process_state import ProcessState
-from utils._init_ import format_time_mmssmmm, get_session
+from utils._init_ import format_time_mmssmmm, get_session, try_get_session_laps
 
 def team_performace_analisys(year: int, round: int, session: str, test_number:int, session_number:int):
     """
@@ -17,21 +16,14 @@ def team_performace_analisys(year: int, round: int, session: str, test_number:in
     session (str): The session type (e.g., 'FP1', 'FP2', 'FP3', 'Q', 'S', 'SS', 'SQ', 'R').
     test_number (int): The test number of the session.
     session_number (int): The session number of the session.
-
-    Returns:
-    str: The process state, either 'FAILED' or 'SUCCESS'.
     """
 
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
                             color_scheme='fastf1')
 
     session = get_session(year, round, session, test_number, session_number)
-    if session is None:
-        return ProcessState.FAILED.name
+    laps = try_get_session_laps(session=session).pick_quicklaps()
 
-    session.load()
-
-    laps = session.laps.pick_quicklaps()
     laps.dropna(ignore_index=True)
 
     transformed_laps = laps.copy()
@@ -65,6 +57,3 @@ def team_performace_analisys(year: int, round: int, session: str, test_number:in
     ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: format_time_mmssmmm(x)))
 
     plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name} | Team Performance")
-    plt.tight_layout()
-
-    return ProcessState.COMPLETED.name

@@ -8,8 +8,7 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 from matplotlib.collections import LineCollection
 
-from utils._init_ import get_session
-from enums.process_state import ProcessState
+from utils._init_ import get_session, try_get_session_laps
 
 def frase_grafica_qualy(drivers):
     cadena = ""
@@ -29,20 +28,14 @@ def track_dominance_analisys(year:int, round:int, session:str, test_number:int, 
     session (str): The session type (e.g., 'FP1', 'FP2', 'FP3', 'Q', 'S', 'SS', 'SQ', 'R').
     test_number (int): The test number of the session.
     session_number (int): The session number of the session.
-
-    Returns:
-    str: The process state, either 'FAILED' or 'SUCCESS'.
     """
 
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False, color_scheme='fastf1')
 
     session = get_session(year, round, session, test_number, session_number)
-    if session is None:
-        return ProcessState.FAILED.name
+    laps = try_get_session_laps(session)
 
-    session.load()
-
-    df_three_best_race_laps = session.laps.pick_not_deleted().sort_values(by="LapTime").drop_duplicates(subset="Driver").reset_index(drop=True).head(4)
+    df_three_best_race_laps = laps.sort_values(by="LapTime").drop_duplicates(subset="Driver").reset_index(drop=True).head(4)
 
     tel_fastest_lap = df_three_best_race_laps.iloc[0].get_telemetry().reset_index(drop=True)
     tel_second_fastest_lap = df_three_best_race_laps.iloc[1].get_telemetry().reset_index(drop=True)
@@ -98,5 +91,3 @@ def track_dominance_analisys(year:int, round:int, session:str, test_number:int, 
     )
 
     cbar.set_ticklabels(df_three_best_race_laps["DriverNumber"].head(3).tolist())
-
-    return ProcessState.COMPLETED.name

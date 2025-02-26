@@ -14,7 +14,6 @@ from analisys._init_ import comparative_lap_time_analisys
 
 from utils._init_ import convert_img_to_bytes
 from utils._init_ import save_img
-from enums.process_state import ProcessState
 
 app = FastAPI()
 
@@ -35,16 +34,7 @@ def get_track_dominance(
     convert_to_bytes: bool = False
     ):
 
-    result = track_dominance_analisys(year, round, session, test_number, session_number)
-    if result == ProcessState.FAILED.name:
-        raise HTTPException(
-            status_code=400,
-            detail={
-                "error": "Sesión no encontrada.",
-                "message": "La sesión solicitada no existe. Asegúrate de que el año, la ronda y la sesión sean correctos.",
-            }
-        )
-
+    track_dominance_analisys(year, round, session, test_number, session_number)
     return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing
 
@@ -59,16 +49,7 @@ def get_top_speed(
     convert_to_bytes: bool = False
     ):
 
-    result = top_speed_analisys(year, round, session, test_number, session_number)
-    if result == ProcessState.FAILED.name:
-        raise HTTPException(
-            status_code=400,
-            detail={
-                "error": "Sesión no encontrada.",
-                "message": "La sesión solicitada no existe. Asegúrate de que el año, la ronda y la sesión sean correctos.",
-            }
-        )
-
+    top_speed_analisys(year, round, session, test_number, session_number)
     return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing
 
@@ -83,16 +64,7 @@ def get_lap_time_average(
     convert_to_bytes: bool = False
     ):
 
-    result = lap_time_average_analisys(year, round, session, test_number, session_number)
-    if result == ProcessState.FAILED.name:
-        raise HTTPException(
-            status_code=400,
-            detail={
-                "error": "Sesión no encontrada.",
-                "message": "La sesión solicitada no existe. Asegúrate de que el año, la ronda y la sesión sean correctos.",
-            }
-        )
-
+    lap_time_average_analisys(year, round, session, test_number, session_number)
     return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing
 
@@ -107,16 +79,7 @@ def get_team_performace(
     convert_to_bytes: bool = False
     ):
 
-    result = team_performace_analisys(year, round, session, test_number, session_number)
-    if result == ProcessState.FAILED.name:
-        raise HTTPException(
-            status_code=400,
-            detail={
-                "error": "Sesión no encontrada.",
-                "message": "La sesión solicitada no existe. Asegúrate de que el año, la ronda y la sesión sean correctos.",
-            }
-        )
-
+    team_performace_analisys(year, round, session, test_number, session_number)
     return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing
 
@@ -128,15 +91,7 @@ def get_lap_time_distribution(
     convert_to_bytes: bool = False
     ):
 
-    result = lap_time_distribution_analisys(year, round, session)
-    if result == ProcessState.FAILED.name:
-        raise HTTPException(
-            status_code=400,
-            detail={
-                "error": "Sesión no encontrada.",
-                "message": "La sesión solicitada no existe. Asegúrate de que el año, la ronda y la sesión sean correctos.",
-            }
-        )
+    lap_time_distribution_analisys(year, round, session)
     return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing
 
@@ -152,15 +107,7 @@ def get_fastest_laps(
     convert_to_bytes: bool = False
     ):
 
-    result = fastest_laps_analisys(year, round, session, test_number, session_number)
-    if result == ProcessState.FAILED.name:
-        raise HTTPException(
-            status_code=400,
-            detail={
-                "error": "Sesión no encontrada.",
-                "message": "La sesión solicitada no existe. Asegúrate de que el año, la ronda y la sesión sean correctos.",
-            }
-        )
+    fastest_laps_analisys(year, round, session, test_number, session_number)
     return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing
 
@@ -173,20 +120,7 @@ def get_race_position_evolution(
     convert_to_bytes: bool = False
     ):
 
-    result = race_position_evolution_analisys(year, round, session)
-    if result == ProcessState.FAILED.name or result == ProcessState.CANCELED.name:
-
-        if result == ProcessState.FAILED.name: message = "La sesión de carrera no existe. Asegúrate de que el año, la ronda sean correctos."
-        if result == ProcessState.CANCELED.name: message = "La sesión solicitada no es una carrera. Asegúrate de que seleccionaste una sesión de carrera."
-
-        raise HTTPException(
-            status_code=400,
-            detail={
-                "error": "Sesión no encontrada.",
-                "message": message,
-            }
-        )
-
+    race_position_evolution_analisys(year, round, session)
     return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing
 
@@ -201,19 +135,11 @@ def get_fastest_drivers_compound(
     convert_to_bytes: bool = False
     ):
 
-    result = fastest_drivers_compound_analisys(year, round, session, test_number, session_number)
-    if result == ProcessState.FAILED.name:
-        raise HTTPException(
-            status_code=400,
-            detail={
-                "error": "Sesión no encontrada.",
-                "message": "La sesión solicitada no existe. Asegúrate de que el año, la ronda y la sesión sean correctos.",
-            }
-        )
+    fastest_drivers_compound_analisys(year, round, session, test_number, session_number)
     return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing
 
-@app.get("/pretest/comparative_lap_time/{year}/{round}/{session}/compare/{piloto1}/{vuelta_piloto1}/vs/{piloto2}/{vuelta_piloto2}", tags=["Pretesting sessions"])
+@app.get("/pretest/comparative_lap_time/{year}/{test_number}/{session_number}/compare/{piloto1}/{vuelta_piloto1}/vs/{piloto2}/{vuelta_piloto2}", tags=["Pretesting sessions"])
 @app.get("/official/comparative_lap_time/{year}/{round}/{session}/compare/{piloto1}/{vuelta_piloto1}/vs/{piloto2}/{vuelta_piloto2}", tags=["Oficial sessions"])
 def get_comparative_lap_time(
     year: int,
@@ -232,14 +158,6 @@ def get_comparative_lap_time(
         piloto1: vuelta_piloto1,
         piloto2: vuelta_piloto2
     }
-    resuls = comparative_lap_time_analisys(year, round, session, test_number, session_number, vueltas_pilotos)
-    if resuls == ProcessState.FAILED.name:
-        raise HTTPException(
-            status_code=400,
-            detail={
-                "error": "Error.",
-                "message": "La sesión solicitada o vueltas seleccionadas no existen.",
-                }
-        )
+    comparative_lap_time_analisys(year, round, session, test_number, session_number, vueltas_pilotos)
     return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing

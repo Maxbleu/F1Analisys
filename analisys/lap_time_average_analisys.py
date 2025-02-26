@@ -1,11 +1,7 @@
 import fastf1
-
 import matplotlib.pyplot as plt
-
 import pandas as pd
-
-from enums.process_state import ProcessState
-from utils._init_ import get_team_colors, get_session
+from utils._init_ import get_team_colors, get_session, try_get_session_laps
 
 def lap_time_average_analisys(year: int, round: int, session: str, test_number: int, session_number: int):
     """
@@ -17,30 +13,21 @@ def lap_time_average_analisys(year: int, round: int, session: str, test_number: 
     session (str): The session type (e.g., 'FP1', 'FP2', 'FP3', 'Q', 'S', 'SS', 'SQ', 'R').
     test_number (int): The test number of the session.
     session_number (int): The session number of the session.
-
-    Returns:
-    str: The process state, either 'FAILED' or 'SUCCESS'.
     """
 
-    fastf1.plotting.setup_mpl(mpl_timedelta_support=True, misc_mpl_mods=False,
-                            color_scheme='fastf1')
+    fastf1.plotting.setup_mpl(mpl_timedelta_support=True, misc_mpl_mods=False, color_scheme='fastf1')
 
     session = get_session(year, round, session, test_number, session_number)
-    if session is None:
-        return ProcessState.FAILED.name
+    laps = try_get_session_laps(session)
 
-    session.load()
+    laps["LapTime"] = pd.to_timedelta(laps["LapTime"])
 
-    session.laps["LapTime"] = pd.to_timedelta(session.laps["LapTime"])
-
-    df_valid_laps = session.laps
-
-    drivers = df_valid_laps['Driver'].unique()
+    drivers = laps['Driver'].unique()
     teams = [session.results.loc[session.results['Abbreviation'] == driver, 'TeamName'].iloc[0] for driver in drivers]
 
     median_lap_times = []
     for driver in drivers:
-        driver_laps = df_valid_laps[df_valid_laps['Driver'] == driver]
+        driver_laps = laps[laps['Driver'] == driver]
         median_lap_time = driver_laps["LapTime"].median().total_seconds()
         median_lap_times.append(median_lap_time)
 
@@ -79,7 +66,3 @@ def lap_time_average_analisys(year: int, round: int, session: str, test_number: 
         va='center', ha='left', color='white')
 
     ax.set_xlim(0, max(time_diff_to_pole) * 1.15)
-
-    plt.tight_layout()
-
-    return ProcessState.COMPLETED.name

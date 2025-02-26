@@ -1,8 +1,7 @@
 import fastf1
 import matplotlib.pyplot as plt
 
-from enums.process_state import ProcessState
-from utils._init_ import get_team_colors, get_session
+from utils._init_ import get_team_colors, get_session, try_get_session_laps
 
 def top_speed_analisys(year:int, round:int, session:str, test_number:int, session_number:int):
     """
@@ -14,21 +13,13 @@ def top_speed_analisys(year:int, round:int, session:str, test_number:int, sessio
     session (str): The session type (e.g., 'FP1', 'FP2', 'FP3', 'Q', 'S', 'SS', 'SQ', 'R').
     test_number (int): The test number of the session.
     session_number (int): The session number of the session.
-
-    Returns:
-    str: The process state, either 'FAILED' or 'SUCCESS'.
     """
 
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
                         color_scheme='fastf1')
 
     session = get_session(year, round, session, test_number, session_number)
-    if session is None:
-        return ProcessState.FAILED.name
-
-    session.load()
-
-    laps = session.laps
+    laps = try_get_session_laps(session=session)
 
     df_top_speeds = laps[["Driver","Team"]]
     df_top_speeds["TopSpeed"] = 0
@@ -68,7 +59,3 @@ def top_speed_analisys(year:int, round:int, session:str, test_number:int, sessio
             fontsize=10
         )
         iterator += 1
-
-    plt.tight_layout()
-
-    return ProcessState.COMPLETED.name

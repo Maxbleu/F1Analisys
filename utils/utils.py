@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
+
 from fastapi.responses import RedirectResponse
+from fastapi import HTTPException
 
 import io
 import base64
@@ -37,3 +39,12 @@ def save_img():
     plt.savefig(file_path)
     plt.close()
     return RedirectResponse(url="/temp/plot_saved.png")
+
+def send_error_message(status_code, title, message):
+    raise HTTPException(
+        status_code= status_code,
+        detail={
+            "error": title,
+            "message": message,
+        }
+    )
