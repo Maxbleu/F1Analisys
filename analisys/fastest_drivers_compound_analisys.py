@@ -61,16 +61,9 @@ def fastest_drivers_compound_analisys(year: int, round: int, session: str, test_
         ax.barh(value.index, value["AvgLapTimeDiff"], color=colors)
         ax.set_yticks(value.index)
         ax.set_yticklabels(value['Driver'])
-        ax.set_ylabel('Drivers', color='white')
         ax.invert_yaxis()
         ax.set_axisbelow(True)
         ax.xaxis.grid(True, which='major', linestyle='--', color='black', zorder=-1000)
-
-        ax1 = ax.twinx()
-        ax1.set_yticks(value.index)
-        ax1.set_yticklabels(value['TotalLaps'])
-        ax1.set_ylabel('Total Laps', color='white')
-        ax1.set_ylim(ax.get_ylim())
 
         fastest_lap = value.iloc[0]
         driver = fastest_lap['Driver']
