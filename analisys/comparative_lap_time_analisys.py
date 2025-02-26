@@ -7,14 +7,18 @@ import matplotlib.pyplot as plt
 
 from utils._init_ import get_session, try_get_session_laps, send_error_message
 
-def comparative_lap_time_analisys(
-        year: int, 
-        round: int, 
-        session: str, 
-        test_number: int,
-        session_number: int,
-        vueltas_pilotos: dict
-    ):
+def comparative_lap_time_analisys(year: int, round: int, session: str, test_number: int, session_number: int, vueltas_pilotos: dict):
+    """
+    Analisys of one lap time from two drivers in a speciffic session.
+
+    Parameters:
+    year (int): The year of the race.
+    round (int): The round number of the race.
+    session (str): The session type (e.g., 'FP1', 'FP2', 'FP3', 'Q', 'S', 'SS', 'SQ', 'R').
+    test_number (int): The test number of the session.
+    session_number (int): The session number of the session.
+    vueltas_pilotos (dict): A dictionary with the laps of each driver.
+    """
 
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False)
 
