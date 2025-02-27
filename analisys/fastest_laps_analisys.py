@@ -52,6 +52,12 @@ def fastest_laps_analisys(year: int, round: int, session: str, test_number: int,
     ax.set_xlabel('Delta to Fastest Lap')
     ax.set_ylabel('Driver')
 
+    ax1 = ax.twinx()
+    ax1.set_yticks(fastest_laps.index)
+    ax1.set_yticklabels(fastest_laps['LapNumber'])
+    ax1.set_ylabel('Lap Number')
+    ax1.set_ylim(ax.get_ylim())
+
     lap_time_string = strftimedelta(pole_lap['LapTime'], '%m:%s.%ms')
 
     plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name}\n"
