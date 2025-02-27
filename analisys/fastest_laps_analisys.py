@@ -41,7 +41,7 @@ def fastest_laps_analisys(year: int, round: int, session: str, test_number: int,
 
     fig, ax = plt.subplots()
     ax.barh(fastest_laps.index, fastest_laps['LapTimeDelta'],
-            color=team_colors, edgecolor='grey')
+            color=team_colors)
     ax.set_yticks(fastest_laps.index)
     ax.set_yticklabels(fastest_laps['Driver'])
 
@@ -62,3 +62,4 @@ def fastest_laps_analisys(year: int, round: int, session: str, test_number: int,
 
     plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name}\n"
                 f"Fastest Lap: {lap_time_string} ({pole_lap['Driver']})")
+    plt.tight_layout()

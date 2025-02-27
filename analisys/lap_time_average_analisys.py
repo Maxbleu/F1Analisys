@@ -37,15 +37,19 @@ def lap_time_average_analisys(year: int, round: int, session: str, test_number: 
     df_median_lap_time_drivers = pd.DataFrame({
         'Driver': drivers,
         'Team': teams,
-        'MedianLapTimeDiff': lap_time_diffs
+        'MedianLapTimeDiff': lap_time_diffs,
     }).sort_values(by="MedianLapTimeDiff").reset_index(drop=True)
 
     team_colors = get_team_colors(df_median_lap_time_drivers, session)
 
     fig, ax = plt.subplots()
+    
     bars = ax.barh(df_median_lap_time_drivers.index, df_median_lap_time_drivers["MedianLapTimeDiff"], color=team_colors)
     ax.set_yticks(df_median_lap_time_drivers.index)
     ax.set_yticklabels(df_median_lap_time_drivers["Driver"])
+    
+    ax.set_xlabel("Diff")
+    ax.set_ylabel("Drivers")
 
     ax.invert_yaxis()
     ax.set_axisbelow(True)
@@ -66,3 +70,4 @@ def lap_time_average_analisys(year: int, round: int, session: str, test_number: 
         va='center', ha='left', color='white')
 
     ax.set_xlim(0, max(time_diff_to_pole) * 1.15)
+    plt.tight_layout()

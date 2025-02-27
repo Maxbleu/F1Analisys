@@ -39,15 +39,16 @@ def comparative_lap_time_analisys(year: int, round: int, session: str, test_numb
 
     fig, ax = plt.subplots()
 
-    ax.plot(ref_tel['Distance'], ref_tel['Speed'], color=plotting.get_team_color(vueltas[keys[0]]['Team'].iloc[0], session))
-    ax.plot(compare_tel['Distance'], compare_tel['Speed'], color=plotting.get_team_color(vueltas[keys[1]]['Team'].iloc[0], session))
-    
+    ax.plot(ref_tel['Distance'], ref_tel['Speed'], color=plotting.get_team_color(vueltas[keys[0]]['Team'].iloc[0], session), label=keys[0])
+    ax.plot(compare_tel['Distance'], compare_tel['Speed'], color=plotting.get_team_color(vueltas[keys[1]]['Team'].iloc[0], session), label=keys[1])
+    ax.legend(loc="upper right")
+
     ax.set_xlabel("Track distance")
     ax.set_ylabel("Speed")
-
+    
     twin = ax.twinx()
     twin.plot(ref_tel['Distance'], delta_time, '--', color='white')
     twin.set_ylabel(f" {keys[1]} ahead | {keys[0]} ahead")
-    fig.subplots_adjust(right=0.85)
 
     plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name}\n{keys[0]} lap {vueltas_pilotos[keys[0]]} vs {keys[1]} lap {vueltas_pilotos[keys[1]]}")
+    plt.tight_layout()

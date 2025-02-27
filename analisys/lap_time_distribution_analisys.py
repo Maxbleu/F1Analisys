@@ -60,3 +60,4 @@ def lap_time_distribution_analisys(year: int, round: int, session: str):
     sns.despine(left=True, bottom=True)
 
     ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: format_time_mmssmmm(x)))
+    plt.tight_layout()

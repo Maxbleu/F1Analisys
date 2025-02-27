@@ -40,3 +40,4 @@ def race_position_evolution_analisys(year: int, round: int, session: str):
 
     ax.legend(bbox_to_anchor=(1.0, 1.02))
     plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name} | Results")
+    plt.tight_layout()

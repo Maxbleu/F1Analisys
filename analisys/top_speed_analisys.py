@@ -59,3 +59,4 @@ def top_speed_analisys(year:int, round:int, session:str, test_number:int, sessio
             fontsize=10
         )
         iterator += 1
+    plt.tight_layout()

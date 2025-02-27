@@ -91,3 +91,4 @@ def track_dominance_analisys(year:int, round:int, session:str, test_number:int, 
     )
 
     cbar.set_ticklabels(df_three_best_race_laps["DriverNumber"].head(3).tolist())
+    plt.tight_layout()
