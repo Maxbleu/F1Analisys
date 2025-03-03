@@ -70,4 +70,5 @@ def fastest_drivers_compound_analisys(year: int, round: int, session: str, test_
         fastest_time = fastest_lap['AvgLapTime']
 
         ax.set_title(f"{key} average fastest\n {driver} - {strftimedelta(fastest_time, '%m:%s.%ms')}", fontsize=11)
+    plt.xticks(rotation=45)
     plt.tight_layout()
