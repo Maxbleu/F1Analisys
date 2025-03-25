@@ -37,18 +37,33 @@ def comparative_lap_time_analisys(year: int, round: int, session: str, test_numb
     keys = list(vueltas.keys())
     delta_time, ref_tel, compare_tel = utils.delta_time(vueltas[keys[0]], vueltas[keys[1]])
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(3, 1, figsize=(6, 8), gridspec_kw={'height_ratios': [0.8, 0.3, 0.3]})
 
-    ax.plot(ref_tel['Distance'], ref_tel['Speed'], color=plotting.get_team_color(vueltas[keys[0]]['Team'].iloc[0], session), label=keys[0])
-    ax.plot(compare_tel['Distance'], compare_tel['Speed'], color=plotting.get_team_color(vueltas[keys[1]]['Team'].iloc[0], session), label=keys[1])
-    ax.legend(loc="upper right")
+    ax[0].plot(ref_tel['Distance'], ref_tel['Speed'], color=plotting.get_team_color(vueltas[keys[0]]['Team'].iloc[0], session), label=keys[0])
+    ax[0].plot(compare_tel['Distance'], compare_tel['Speed'], color=plotting.get_team_color(vueltas[keys[1]]['Team'].iloc[0], session), label=keys[1])
+    ax[0].legend(loc="upper right")
 
-    ax.set_xlabel("Track distance")
-    ax.set_ylabel("Speed")
+    ax[0].set_xlabel("Track distance")
+    ax[0].set_ylabel("Speed")
     
-    twin = ax.twinx()
+    twin = ax[0].twinx()
     twin.plot(ref_tel['Distance'], delta_time, '--', color='white')
     twin.set_ylabel(f" {keys[1]} ahead | {keys[0]} ahead")
 
     plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name}\n{keys[0]} lap {vueltas_pilotos[keys[0]]} vs {keys[1]} lap {vueltas_pilotos[keys[1]]}")
+
+    #   Obtenemos las telemetrias de las vueltas más rápidas de cada piloto.
+    tel_fastest_lap = vueltas[keys[0]].get_telemetry()
+    second_tel_fastest_lap = vueltas[keys[1]].get_telemetry()
+
+    #   Gráfico de acelerador.
+    ax[1].stairs(tel_fastest_lap['Throttle'], label=keys[0], color=plotting.get_team_color(vueltas[keys[0]]['Team'].iloc[0], session))
+    ax[1].stairs(second_tel_fastest_lap['Throttle'], label=keys[1], color=plotting.get_team_color(vueltas[keys[1]]['Team'].iloc[0], session))
+    ax[1].set_ylabel("Throttle")
+
+    #   Gráfico de freno.
+    ax[2].stairs(tel_fastest_lap['Brake'], label=keys[0], color=plotting.get_team_color(vueltas[keys[0]]['Team'].iloc[0], session))
+    ax[2].stairs(second_tel_fastest_lap['Brake'], label=keys[1], color=plotting.get_team_color(vueltas[keys[1]]['Team'].iloc[0], session))
+    ax[2].set_ylabel("Brake")
+
     plt.tight_layout()
