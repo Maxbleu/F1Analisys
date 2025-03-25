@@ -10,13 +10,13 @@ def race_position_evolution_analisys(year: int, round: int, session: str):
     Parameters:
     year (int): The year of the race.
     round (int): The round number of the race.
-    session (str): The session type ('R').
+    session (str): The session type ('R' and 'S').
     """
 
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
                             color_scheme='fastf1')
 
-    if session != "R": send_error_message(status_code=400, title="Solo carreras", message="Esta gráfico solo está disponible para carreras")
+    if (session != "R" and session != "S"): send_error_message(status_code=400, title="Solo carreras", message="Esta gráfico solo está disponible para carreras")
     session = get_session(year, round, session)
     laps = try_get_session_laps(session=session)
 

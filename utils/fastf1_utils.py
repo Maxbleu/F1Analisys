@@ -21,7 +21,7 @@ def try_get_session_laps(session):
     laps = None
     try:
         session.load()
-        laps = session.laps
+        laps = session.laps.pick_not_deleted()
     except Exception as e:
         send_error_message(status_code=404, title="No hay vueltas disponibles", message=f"Los datos de la sesión {session.event["EventName"]} {session.event.year} {session.name} no existen o no se han podido cargar todavia")
     return laps
