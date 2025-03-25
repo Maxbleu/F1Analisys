@@ -37,7 +37,7 @@ def comparative_lap_time_analisys(year: int, round: int, session: str, test_numb
     keys = list(vueltas.keys())
     delta_time, ref_tel, compare_tel = utils.delta_time(vueltas[keys[0]], vueltas[keys[1]])
 
-    fig, ax = plt.subplots(3, 1, figsize=(6, 8), gridspec_kw={'height_ratios': [0.8, 0.3, 0.3]})
+    fig, ax = plt.subplots(6, 1, figsize=(6, 12), gridspec_kw={'height_ratios': [0.8, 0.3, 0.3, 0.3, 0.3, 0.3]})
 
     ax[0].plot(ref_tel['Distance'], ref_tel['Speed'], color=plotting.get_team_color(vueltas[keys[0]]['Team'].iloc[0], session), label=keys[0])
     ax[0].plot(compare_tel['Distance'], compare_tel['Speed'], color=plotting.get_team_color(vueltas[keys[1]]['Team'].iloc[0], session), label=keys[1])
@@ -65,5 +65,20 @@ def comparative_lap_time_analisys(year: int, round: int, session: str, test_numb
     ax[2].stairs(tel_fastest_lap['Brake'], label=keys[0], color=plotting.get_team_color(vueltas[keys[0]]['Team'].iloc[0], session))
     ax[2].stairs(second_tel_fastest_lap['Brake'], label=keys[1], color=plotting.get_team_color(vueltas[keys[1]]['Team'].iloc[0], session))
     ax[2].set_ylabel("Brake")
+
+    #   Gráfico de RPM
+    ax[3].plot(tel_fastest_lap['RPM'], label=keys[0], color=plotting.get_team_color(vueltas[keys[0]]['Team'].iloc[0], session))
+    ax[3].plot(second_tel_fastest_lap['RPM'], label=keys[1], color=plotting.get_team_color(vueltas[keys[1]]['Team'].iloc[0], session))
+    ax[3].set_ylabel("RPM")
+
+    #   Gráfico de Gear
+    ax[4].stairs(tel_fastest_lap['nGear'], label=keys[0], color=plotting.get_team_color(vueltas[keys[0]]['Team'].iloc[0], session))
+    ax[4].stairs(second_tel_fastest_lap['nGear'], label=keys[1], color=plotting.get_team_color(vueltas[keys[1]]['Team'].iloc[0], session))
+    ax[4].set_ylabel("nGear")
+
+    #   Gráfico de DRS
+    ax[5].stairs(tel_fastest_lap['DRS'], label=keys[0], color=plotting.get_team_color(vueltas[keys[0]]['Team'].iloc[0], session))
+    ax[5].stairs(second_tel_fastest_lap['DRS'], label=keys[1], color=plotting.get_team_color(vueltas[keys[1]]['Team'].iloc[0], session))
+    ax[5].set_ylabel("DRS")
 
     plt.tight_layout()
