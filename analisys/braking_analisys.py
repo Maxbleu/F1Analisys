@@ -36,7 +36,7 @@ def braking_analisys(year:int, round:int, session:str, test_number:int, session_
 
     all_telemetry_df["Brake"] = all_telemetry_df["Brake"].abs()
     df_mean_brake_drive = all_telemetry_df.groupby(["Driver", "Team"], as_index=False)["Brake"].mean()
-    df_mean_brake_drive.sort_values(by="Brake", ascending=True, inplace=True)
+    df_mean_brake_drive.sort_values(by="Brake", ascending=False, inplace=True)
     df_mean_brake_drive.reset_index(drop=True, inplace=True)
 
     team_colors = get_team_colors(df_mean_brake_drive, session)
@@ -62,7 +62,7 @@ def braking_analisys(year:int, round:int, session:str, test_number:int, session_
         cadena = f'{brake:.2f}'
         time_diff_to_pole.append(brake)
 
-        ax.text(df_mean_brake_drive["Brake"].loc[i] + 0.040, bar.get_y() + bar.get_height()/2, cadena, 
+        ax.text(df_mean_brake_drive["Brake"].loc[i] + 0.015, bar.get_y() + bar.get_height()/2, cadena, 
         va='center', ha='left', color='white')
 
     ax.set_xlim(0, max(time_diff_to_pole) * 1.15)
