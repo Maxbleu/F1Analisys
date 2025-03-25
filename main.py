@@ -11,6 +11,7 @@ from analisys._init_ import fastest_laps_analisys
 from analisys._init_ import race_position_evolution_analisys
 from analisys._init_ import fastest_drivers_compound_analisys
 from analisys._init_ import comparative_lap_time_analisys
+from analisys._init_ import braking_analisys
 
 from utils._init_ import convert_img_to_bytes
 from utils._init_ import save_img
@@ -50,6 +51,21 @@ def get_top_speed(
     ):
 
     top_speed_analisys(year, round, session, test_number, session_number)
+    return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
+    return return_thing
+
+@app.get("/pretest/braking/{year}/{test_number}/{session_number}", tags=["Pretesting sessions"])
+@app.get("/official/braking/{year}/{round}/{session}", tags=["Oficial sessions"])
+def get_braking(
+    year: int, 
+    round: int = None, 
+    session: str = None,
+    test_number: int = None,
+    session_number: int = None,
+    convert_to_bytes: bool = False
+    ):
+
+    braking_analisys(year, round, session, test_number, session_number)
     return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing
 
