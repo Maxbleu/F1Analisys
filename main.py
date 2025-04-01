@@ -188,17 +188,14 @@ def get_comparative_lap_time(
     convert_to_bytes : bool = False
     ):
 
-    vueltas_pilotos = {
-        piloto1: vuelta_piloto1,
-        piloto2: vuelta_piloto2
-    }
+    vueltas_pilotos = {piloto1: vuelta_piloto1,piloto2: vuelta_piloto2}
     comparative_lap_time_analisys(year, round, session, test_number, session_number, vueltas_pilotos)
     return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing
 
 @app.get("/pretest/long_runs/{year}/{test_number}/{session_number}/compare/{pilotos_info:path}", tags=["Pretest sessions"])
 @app.get("/official/long_runs/{year}/{round}/{session}/compare/{pilotos_info:path}", tags=["Oficial sessions"])
-def get_long_runs(
+def get_long_runs( 
     year: int,
     round: int = None,
     session: str = None,

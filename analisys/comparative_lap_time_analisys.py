@@ -26,7 +26,6 @@ def comparative_lap_time_analisys(year: int, round: int, session: str, test_numb
     laps = try_get_session_laps(session=session)
 
     laps["LapTime"] = pd.to_timedelta(laps["LapTime"]) 
-
     vueltas = {}
     for piloto in vueltas_pilotos.keys():
         vuelta_seleccionada = laps.loc[laps["Driver"] == piloto].loc[laps["LapNumber"] == vueltas_pilotos[piloto]]
