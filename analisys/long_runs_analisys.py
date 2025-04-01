@@ -34,7 +34,7 @@ def long_runs_analisys(year: int, round: int, session: str, test_number: int, se
         style = fastf1.plotting.get_driver_style(identifier=abb,
                                                 style=['color', 'linestyle'],
                                                 session=session)
-        style["maker"] = "o"
+        style['marker'] = 'o'
 
         ax.plot(drv_laps['LapNumber'], drv_laps['LapTime'], label=piloto, **style)
 
