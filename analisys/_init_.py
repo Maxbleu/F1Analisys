@@ -9,3 +9,4 @@ from .fastest_drivers_compound_analisys import fastest_drivers_compound_analisys
 from .comparative_lap_time_analisys import comparative_lap_time_analisys
 from .braking_analisys import braking_analisys
 from .throttle_analisys import throttle_analisys
+from .long_runs_analisys import long_runs_analisys

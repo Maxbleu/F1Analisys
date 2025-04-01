@@ -40,9 +40,6 @@ def lap_time_distribution_analisys(year: int, round: int, session: str):
                 palette=fastf1.plotting.get_driver_color_mapping(session=session)
                 )
 
-    print(fastf1.plotting.get_compound_mapping(session=session))
-    print(driver_laps["Compound"].unique().tolist())
-
     sns.swarmplot(data=driver_laps,
                 x="Driver",
                 y="LapTime(s)",

@@ -13,9 +13,11 @@ from analisys._init_ import fastest_drivers_compound_analisys
 from analisys._init_ import comparative_lap_time_analisys
 from analisys._init_ import braking_analisys
 from analisys._init_ import throttle_analisys
+from analisys._init_ import long_runs_analisys
 
 from utils._init_ import convert_img_to_bytes
 from utils._init_ import save_img
+from utils._init_ import get_info_drivers
 
 app = FastAPI()
 
@@ -24,21 +26,6 @@ app.mount("/temp", StaticFiles(directory="temp"), name="temp")
 @app.get("/", include_in_schema=False)
 def redirect_to_docs():
     return RedirectResponse(url="/docs")
-
-@app.get("/pretest/track_dominance/{year}/{test_number}/{session_number}", tags=["Pretesting sessions"])
-@app.get("/official/track_dominance/{year}/{round}/{session}", tags=["Oficial sessions"])
-def get_track_dominance(
-    year: int, 
-    round: int = None,
-    session: str = None, 
-    test_number: int = None,
-    session_number: int = None,
-    convert_to_bytes: bool = False
-    ):
-
-    track_dominance_analisys(year, round, session, test_number, session_number)
-    return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
-    return return_thing
 
 @app.get("/pretest/top_speed/{year}/{test_number}/{session_number}", tags=["Pretesting sessions"])
 @app.get("/official/top_speed/{year}/{round}/{session}", tags=["Oficial sessions"])
@@ -171,6 +158,21 @@ def get_fastest_drivers_compound(
     return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing
 
+@app.get("/pretest/track_dominance/{year}/{test_number}/{session_number}", tags=["Pretesting sessions"])
+@app.get("/official/track_dominance/{year}/{round}/{session}", tags=["Oficial sessions"])
+def get_track_dominance(
+    year: int, 
+    round: int = None,
+    session: str = None, 
+    test_number: int = None,
+    session_number: int = None,
+    convert_to_bytes: bool = False
+    ):
+
+    track_dominance_analisys(year, round, session, test_number, session_number)
+    return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
+    return return_thing
+
 @app.get("/pretest/comparative_lap_time/{year}/{test_number}/{session_number}/compare/{piloto1}/{vuelta_piloto1}/vs/{piloto2}/{vuelta_piloto2}", tags=["Pretesting sessions"])
 @app.get("/official/comparative_lap_time/{year}/{round}/{session}/compare/{piloto1}/{vuelta_piloto1}/vs/{piloto2}/{vuelta_piloto2}", tags=["Oficial sessions"])
 def get_comparative_lap_time(
@@ -191,5 +193,22 @@ def get_comparative_lap_time(
         piloto2: vuelta_piloto2
     }
     comparative_lap_time_analisys(year, round, session, test_number, session_number, vueltas_pilotos)
+    return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
+    return return_thing
+
+@app.get("/pretest/long_runs/{year}/{test_number}/{session_number}/compare/{pilotos_info:path}", tags=["Pretest sessions"])
+@app.get("/official/long_runs/{year}/{round}/{session}/compare/{pilotos_info:path}", tags=["Oficial sessions"])
+def get_long_runs(
+    year: int,
+    round: int = None,
+    session: str = None,
+    test_number: int = None,
+    session_number: int = None,
+    pilotos_info: str = None,
+    convert_to_bytes: bool = False
+    ):
+
+    vueltas_pilotos = get_info_drivers(pilotos_info)
+    long_runs_analisys(year, round, session, test_number, session_number, vueltas_pilotos)
     return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing
