@@ -160,42 +160,43 @@ def get_fastest_drivers_compound(
 
 @app.get("/pretest/track_dominance/{year}/{test_number}/{session_number}", tags=["Pretesting sessions"])
 @app.get("/official/track_dominance/{year}/{round}/{session}", tags=["Oficial sessions"])
+@app.get("/pretest/track_dominance/{year}/{test_number}/{session_number}/compare/{pilotos_info:path}", tags=["Pretesting sessions"])
+@app.get("/official/track_dominance/{year}/{round}/{session}/compare/{pilotos_info:path}", tags=["Oficial sessions"])
 def get_track_dominance(
     year: int, 
     round: int = None,
     session: str = None, 
     test_number: int = None,
     session_number: int = None,
+    pilotos_info: str = None,
     convert_to_bytes: bool = False
     ):
 
-    track_dominance_analisys(year, round, session, test_number, session_number)
+    vueltas_pilotos_dict = get_info_drivers(pilotos_info)
+    track_dominance_analisys(year, round, session, test_number, session_number, vueltas_pilotos_dict)
     return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing
 
-@app.get("/pretest/comparative_lap_time/{year}/{test_number}/{session_number}/compare/{piloto1}/{vuelta_piloto1}/vs/{piloto2}/{vuelta_piloto2}", tags=["Pretesting sessions"])
-@app.get("/official/comparative_lap_time/{year}/{round}/{session}/compare/{piloto1}/{vuelta_piloto1}/vs/{piloto2}/{vuelta_piloto2}", tags=["Oficial sessions"])
+@app.get("/pretest/comparative_lap_time/{year}/{test_number}/{session_number}/compare/{pilotos_info:path}", tags=["Pretesting sessions"])
+@app.get("/official/comparative_lap_time/{year}/{round}/{session}/compare/{pilotos_info:path}", tags=["Oficial sessions"])
 def get_comparative_lap_time(
     year: int,
     round: int = None,
     session: str = None,
     test_number: int = None,
     session_number: int = None,
-    piloto1: str = None,
-    vuelta_piloto1: int = None,
-    piloto2: str = None,
-    vuelta_piloto2: int = None,
+    pilotos_info: str = None,
     convert_to_bytes : bool = False
     ):
 
-    vueltas_pilotos = {piloto1: vuelta_piloto1,piloto2: vuelta_piloto2}
-    comparative_lap_time_analisys(year, round, session, test_number, session_number, vueltas_pilotos)
+    vueltas_pilotos_dict = get_info_drivers(pilotos_info)
+    comparative_lap_time_analisys(year, round, session, test_number, session_number, vueltas_pilotos_dict)
     return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing
 
-@app.get("/pretest/long_runs/{year}/{test_number}/{session_number}/compare/{pilotos_info:path}", tags=["Pretest sessions"])
+@app.get("/pretest/long_runs/{year}/{test_number}/{session_number}/compare/{pilotos_info:path}", tags=["Pretesting sessions"])
 @app.get("/official/long_runs/{year}/{round}/{session}/compare/{pilotos_info:path}", tags=["Oficial sessions"])
-def get_long_runs( 
+def get_long_runs(
     year: int,
     round: int = None,
     session: str = None,
@@ -205,7 +206,7 @@ def get_long_runs(
     convert_to_bytes: bool = False
     ):
 
-    vueltas_pilotos = get_info_drivers(pilotos_info)
-    long_runs_analisys(year, round, session, test_number, session_number, vueltas_pilotos)
+    vueltas_pilotos_dict = get_info_drivers(pilotos_info)
+    long_runs_analisys(year, round, session, test_number, session_number, vueltas_pilotos_dict)
     return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing

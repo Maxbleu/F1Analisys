@@ -28,7 +28,7 @@ def long_runs_analisys(year: int, round: int, session: str, test_number: int, se
     fig, ax = plt.subplots()
     for piloto in vueltas_pilotos.keys():
         drv_laps = laps.pick_driver(piloto)
-        drv_laps = drv_laps.pick_laps(range(int(vueltas_pilotos[piloto][0]),int(vueltas_pilotos[piloto][1])))
+        drv_laps = drv_laps.pick_laps(range(vueltas_pilotos[piloto][0],vueltas_pilotos[piloto][1]))
 
         abb = drv_laps['Driver'].iloc[0]
         style = fastf1.plotting.get_driver_style(identifier=abb,

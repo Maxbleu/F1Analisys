@@ -50,9 +50,12 @@ def send_error_message(status_code, title, message):
     )
 
 def get_info_drivers(pilotos_info):
-    vueltas_pilotos = {}
+    vueltas_pilotos_dict = {}
+    if not pilotos_info: return vueltas_pilotos_dict
+
     strings_vualtas_pilotos = pilotos_info.split("/vs/")
     for string in strings_vualtas_pilotos:
         info = string.split("/")
-        vueltas_pilotos[info[0]] = info[1:]
-    return vueltas_pilotos
+        vueltas_pilotos_dict[info[0]] = list(map(int, info[1:]))
+    
+    return vueltas_pilotos_dict

@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 from utils._init_ import get_session, try_get_session_laps, send_error_message
 
-def comparative_lap_time_analisys(year: int, round: int, session: str, test_number: int, session_number: int, vueltas_pilotos: dict):
+def comparative_lap_time_analisys(year: int, round: int, session: str, test_number: int, session_number: int, vueltas_pilotos_dict: dict):
     """
     Analisys of one lap time from two drivers in a speciffic session.
 
@@ -27,57 +27,67 @@ def comparative_lap_time_analisys(year: int, round: int, session: str, test_numb
 
     laps["LapTime"] = pd.to_timedelta(laps["LapTime"]) 
     vueltas = {}
-    for piloto in vueltas_pilotos.keys():
-        vuelta_seleccionada = laps.loc[laps["Driver"] == piloto].loc[laps["LapNumber"] == vueltas_pilotos[piloto]]
+    for piloto in vueltas_pilotos_dict.keys():
+        vuelta_seleccionada = laps.loc[laps["Driver"] == piloto].loc[laps["LapNumber"] == vueltas_pilotos_dict[piloto][0]]
         if vuelta_seleccionada.empty:
             send_error_message(status_code=404, title="No hay vueltas disponibles", message=f"No existen vueltas para {piloto} en la sesión {session.event["EventName"]} {session.event.year} {session.name}")
         vueltas[piloto] = vuelta_seleccionada
 
+    fig, ax = plt.subplots(7, 1, figsize=(6, 12), gridspec_kw={'height_ratios': [0.8, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]})
+
     keys = list(vueltas.keys())
-    delta_time, ref_tel, compare_tel = utils.delta_time(vueltas[keys[0]], vueltas[keys[1]])
+    for i, piloto in enumerate(keys):
 
-    fig, ax = plt.subplots(6, 1, figsize=(6, 12), gridspec_kw={'height_ratios': [0.8, 0.3, 0.3, 0.3, 0.3, 0.3]})
+        color = plotting.get_team_color(vueltas[keys[i]]['Team'].iloc[0], session)
+        delta_time, ref_tel, compare_tel = utils.delta_time(vueltas[keys[0]], vueltas[keys[i]])
 
-    ax[0].plot(ref_tel['Distance'], ref_tel['Speed'], color=plotting.get_team_color(vueltas[keys[0]]['Team'].iloc[0], session), label=keys[0])
-    ax[0].plot(compare_tel['Distance'], compare_tel['Speed'], color=plotting.get_team_color(vueltas[keys[1]]['Team'].iloc[0], session), label=keys[1])
+        #   Gráfico de velocidad en distancia
+        ax[0].plot(ref_tel["Distance"] if i == 0 else compare_tel["Distance"], ref_tel["Speed"] if i == 0 else compare_tel["Speed"], color=color, label=keys[i])
+
+        #   Gráfico de deltas
+        ax[1].plot(ref_tel['Distance'], delta_time, '--', color=color)
+
+        tel_lap = vueltas[keys[i]].get_telemetry()
+        #   Gráfico de acelerador
+        ax[2].stairs(tel_lap['Throttle'], color=color, label=keys[i])
+
+        #   Gráfico de freno.
+        ax[3].stairs(tel_lap['Brake'], color=color, label=keys[i])
+    
+        #   Gráfico de RPM
+        ax[4].plot(tel_lap['RPM'], color=color, label=keys[i])
+
+        #   Gráfico de Gear
+        ax[5].stairs(tel_lap['nGear'], color=color, label=keys[i])
+
+        #   Gráfico de DRS
+        ax[6].stairs(tel_lap['DRS'], color=color, label=keys[i])
+
+    #   Enumerar curvas en la telemetría
+    v_max = vueltas[keys[0]].get_telemetry()['Speed'].max()
+    v_min = vueltas[keys[0]].get_telemetry()['Speed'].min()
+    circuit_info = session.get_circuit_info()
+
+    ax[0].vlines(x=circuit_info.corners['Distance'], ymin=v_min-20, ymax=v_max+20,
+            linestyles='dotted', colors='grey')
+    for _, corner in circuit_info.corners.iterrows():
+        txt = f"{corner['Number']}{corner['Letter']}"
+        ax[0].text(corner['Distance'], v_min-20, txt,
+                va='center_baseline', ha='center', size='small')
+
+    #   Detallar gráficas
     ax[0].legend(loc="upper right")
-
     ax[0].set_xlabel("Track distance")
     ax[0].set_ylabel("Speed")
-    
-    twin = ax[0].twinx()
-    twin.plot(ref_tel['Distance'], delta_time, '--', color='white')
-    twin.set_ylabel(f" {keys[1]} ahead | {keys[0]} ahead")
 
-    plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name}\n{keys[0]} lap {vueltas_pilotos[keys[0]]} vs {keys[1]} lap {vueltas_pilotos[keys[1]]}")
+    ax[1].set_ylabel("Delta")
+    ax[2].set_ylabel("Throttle")
+    ax[3].set_ylabel("Brake")
+    ax[4].set_ylabel("RPM")
+    ax[5].set_ylabel("nGear")
+    ax[6].set_ylabel("DRS")
 
-    #   Obtenemos las telemetrias de las vueltas más rápidas de cada piloto.
-    tel_fastest_lap = vueltas[keys[0]].get_telemetry()
-    second_tel_fastest_lap = vueltas[keys[1]].get_telemetry()
-
-    #   Gráfico de acelerador.
-    ax[1].stairs(tel_fastest_lap['Throttle'], label=keys[0], color=plotting.get_team_color(vueltas[keys[0]]['Team'].iloc[0], session))
-    ax[1].stairs(second_tel_fastest_lap['Throttle'], label=keys[1], color=plotting.get_team_color(vueltas[keys[1]]['Team'].iloc[0], session))
-    ax[1].set_ylabel("Throttle")
-
-    #   Gráfico de freno.
-    ax[2].stairs(tel_fastest_lap['Brake'], label=keys[0], color=plotting.get_team_color(vueltas[keys[0]]['Team'].iloc[0], session))
-    ax[2].stairs(second_tel_fastest_lap['Brake'], label=keys[1], color=plotting.get_team_color(vueltas[keys[1]]['Team'].iloc[0], session))
-    ax[2].set_ylabel("Brake")
-
-    #   Gráfico de RPM
-    ax[3].plot(tel_fastest_lap['RPM'], label=keys[0], color=plotting.get_team_color(vueltas[keys[0]]['Team'].iloc[0], session))
-    ax[3].plot(second_tel_fastest_lap['RPM'], label=keys[1], color=plotting.get_team_color(vueltas[keys[1]]['Team'].iloc[0], session))
-    ax[3].set_ylabel("RPM")
-
-    #   Gráfico de Gear
-    ax[4].stairs(tel_fastest_lap['nGear'], label=keys[0], color=plotting.get_team_color(vueltas[keys[0]]['Team'].iloc[0], session))
-    ax[4].stairs(second_tel_fastest_lap['nGear'], label=keys[1], color=plotting.get_team_color(vueltas[keys[1]]['Team'].iloc[0], session))
-    ax[4].set_ylabel("nGear")
-
-    #   Gráfico de DRS
-    ax[5].stairs(tel_fastest_lap['DRS'], label=keys[0], color=plotting.get_team_color(vueltas[keys[0]]['Team'].iloc[0], session))
-    ax[5].stairs(second_tel_fastest_lap['DRS'], label=keys[1], color=plotting.get_team_color(vueltas[keys[1]]['Team'].iloc[0], session))
-    ax[5].set_ylabel("DRS")
+    plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name}\n"
+                f"Lap time comparative of {', '.join(vueltas_pilotos_dict.keys())}")
 
     plt.tight_layout()
