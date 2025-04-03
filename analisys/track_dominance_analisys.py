@@ -30,7 +30,7 @@ def track_dominance_analisys(year: int, round: int, session: str, test_number: i
     laps["LapTime"] = pd.to_timedelta(laps["LapTime"])
 
     vueltas_pilotos = dict()
-    if len(vueltas_pilotos_dict) == 0:
+    if vueltas_pilotos_dict is None or len(vueltas_pilotos_dict) == 0:
         df_three_best_race_laps = laps.sort_values(by="LapTime").drop_duplicates(subset="Driver").reset_index(drop=True).head(3)
         for i, piloto in enumerate(df_three_best_race_laps["Driver"]):
             df_telemetria = df_three_best_race_laps.iloc[i].get_telemetry().reset_index(drop=True)

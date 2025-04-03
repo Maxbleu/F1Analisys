@@ -177,6 +177,8 @@ def get_track_dominance(
     return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing
 
+@app.get("/pretest/comparative_lap_time/{year}/{test_number}/{session_number}", tags=["Pretesting sessions"])
+@app.get("/official/comparative_lap_time/{year}/{round}/{session}", tags=["Oficial sessions"])
 @app.get("/pretest/comparative_lap_time/{year}/{test_number}/{session_number}/compare/{pilotos_info:path}", tags=["Pretesting sessions"])
 @app.get("/official/comparative_lap_time/{year}/{round}/{session}/compare/{pilotos_info:path}", tags=["Oficial sessions"])
 def get_comparative_lap_time(

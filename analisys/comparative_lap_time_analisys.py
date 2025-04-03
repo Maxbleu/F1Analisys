@@ -26,20 +26,28 @@ def comparative_lap_time_analisys(year: int, round: int, session: str, test_numb
     laps = try_get_session_laps(session=session)
 
     laps["LapTime"] = pd.to_timedelta(laps["LapTime"]) 
-    vueltas = {}
-    for piloto in vueltas_pilotos_dict.keys():
-        vuelta_seleccionada = laps.loc[laps["Driver"] == piloto].loc[laps["LapNumber"] == vueltas_pilotos_dict[piloto][0]]
-        if vuelta_seleccionada.empty:
-            send_error_message(status_code=404, title="No hay vueltas disponibles", message=f"No existen vueltas para {piloto} en la sesión {session.event["EventName"]} {session.event.year} {session.name}")
-        vueltas[piloto] = vuelta_seleccionada
+    vueltas_pilotos = {}
+    if vueltas_pilotos_dict is None or len(vueltas_pilotos_dict) == 0:
+        df_three_best_race_laps = laps.sort_values(by="LapTime").drop_duplicates(subset="Driver").reset_index(drop=True).head(3)
+        for i, piloto in enumerate(df_three_best_race_laps["Driver"]):
+            df_telemetria = df_three_best_race_laps.iloc[i:i+1]
+            vueltas_pilotos[piloto] = df_telemetria.iloc[0]
+    else:
+        for piloto in vueltas_pilotos_dict.keys():
+            vuelta_seleccionada = laps.loc[laps["Driver"] == piloto].loc[laps["LapNumber"] == vueltas_pilotos_dict[piloto][0]]
+            if vuelta_seleccionada.empty:
+                send_error_message(status_code=404, title="No hay vueltas disponibles", message=f"No existen vueltas para {piloto} en la sesión {session.event["EventName"]} {session.event.year} {session.name}")
+            vueltas_pilotos[piloto] = vuelta_seleccionada
 
     fig, ax = plt.subplots(7, 1, figsize=(6, 12), gridspec_kw={'height_ratios': [0.8, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]})
 
-    keys = list(vueltas.keys())
+    keys = list(vueltas_pilotos.keys())
     for i, piloto in enumerate(keys):
 
-        color = plotting.get_team_color(vueltas[keys[i]]['Team'].iloc[0], session)
-        delta_time, ref_tel, compare_tel = utils.delta_time(vueltas[keys[0]], vueltas[keys[i]])
+        color = plotting.get_team_color(vueltas_pilotos[keys[i]]['Team'], session)
+        tel_lap = vueltas_pilotos[keys[i]].get_telemetry()
+
+        delta_time, ref_tel, compare_tel = utils.delta_time(vueltas_pilotos[keys[0]], vueltas_pilotos[keys[i]])
 
         #   Gráfico de velocidad en distancia
         ax[0].plot(ref_tel["Distance"] if i == 0 else compare_tel["Distance"], ref_tel["Speed"] if i == 0 else compare_tel["Speed"], color=color, label=keys[i])
@@ -47,13 +55,12 @@ def comparative_lap_time_analisys(year: int, round: int, session: str, test_numb
         #   Gráfico de deltas
         ax[1].plot(ref_tel['Distance'], delta_time, '--', color=color)
 
-        tel_lap = vueltas[keys[i]].get_telemetry()
         #   Gráfico de acelerador
         ax[2].stairs(tel_lap['Throttle'], color=color, label=keys[i])
 
         #   Gráfico de freno.
         ax[3].stairs(tel_lap['Brake'], color=color, label=keys[i])
-    
+
         #   Gráfico de RPM
         ax[4].plot(tel_lap['RPM'], color=color, label=keys[i])
 
@@ -64,8 +71,8 @@ def comparative_lap_time_analisys(year: int, round: int, session: str, test_numb
         ax[6].stairs(tel_lap['DRS'], color=color, label=keys[i])
 
     #   Enumerar curvas en la telemetría
-    v_max = vueltas[keys[0]].get_telemetry()['Speed'].max()
-    v_min = vueltas[keys[0]].get_telemetry()['Speed'].min()
+    v_max = vueltas_pilotos[keys[0]].get_telemetry()['Speed'].max()
+    v_min = vueltas_pilotos[keys[0]].get_telemetry()['Speed'].min()
     circuit_info = session.get_circuit_info()
 
     ax[0].vlines(x=circuit_info.corners['Distance'], ymin=v_min-20, ymax=v_max+20,
