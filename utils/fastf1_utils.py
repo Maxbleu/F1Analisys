@@ -4,10 +4,13 @@ import fastf1
 from utils._init_ import send_error_message
 
 def get_session(year, round=None, session=None, test_number=None, session_number=None):
-    if session is not None and round is not None:
-            session = fastf1.get_session(year, round, session)
-    elif test_number is not None and session_number is not None:
-        session = fastf1.get_testing_session(year, test_number, session_number)
+    try:
+        if session is not None and round is not None:
+                session = fastf1.get_session(year, round, session)
+        elif test_number is not None and session_number is not None:
+            session = fastf1.get_testing_session(year, test_number, session_number)
+    except Exception as e:
+        send_error_message(status_code=404, title="No existe la sesión seleccionada", message=f"Los datos de la sesión no existen o no se han podido cargar todavia")
     return session
 
 def get_team_colors(df, session):
