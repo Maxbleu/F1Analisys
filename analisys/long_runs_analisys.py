@@ -23,8 +23,6 @@ def long_runs_analisys(year: int, round: int, session: str, test_number: int, se
     session = get_session(year, round, session, test_number, session_number)
     laps = try_get_session_laps(session=session)
 
-    laps["LapTime"] = pd.to_timedelta(laps["LapTime"]).dt.seconds
-
     fig, ax = plt.subplots()
     for piloto in vueltas_pilotos.keys():
         drv_laps = laps.pick_driver(piloto)
@@ -36,6 +34,7 @@ def long_runs_analisys(year: int, round: int, session: str, test_number: int, se
                                                 session=session)
         style['marker'] = 'o'
 
+        drv_laps["LapTime"] = drv_laps["LapTime"].dt.total_seconds()
         ax.plot(drv_laps['LapNumber'], drv_laps['LapTime'], label=piloto, **style)
 
     ax.set_ylabel("LapTime")
