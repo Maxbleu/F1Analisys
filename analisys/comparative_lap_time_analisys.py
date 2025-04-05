@@ -4,8 +4,11 @@ import fastf1.utils as utils
 
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
 
-from utils._init_ import get_session, try_get_session_laps, send_error_message
+from collections import Counter
+
+from utils._init_ import get_session, try_get_session_laps, send_error_message, get_team_colors
 
 def comparative_lap_time_analisys(year: int, round: int, session: str, test_number: int, session_number: int, vueltas_pilotos_dict: dict):
     """
@@ -39,12 +42,29 @@ def comparative_lap_time_analisys(year: int, round: int, session: str, test_numb
                 send_error_message(status_code=404, title="No hay vueltas disponibles", message=f"No existen vueltas para {piloto} en la sesión {session.event["EventName"]} {session.event.year} {session.name}")
             vueltas_pilotos[piloto] = vuelta_seleccionada
 
+    if not vueltas_pilotos:
+        raise ValueError("No valid laps found for analysis.")
+
+    df_vueltas = pd.concat(vueltas_pilotos).reset_index()
+
+    # Driver mapping for color indices
+    team_colors = get_team_colors(df_vueltas[["Team", "Driver"]].drop_duplicates(), session)
+
+    #   Comprobar que no hay colores repetidos
+    conteo = Counter(team_colors)
+    for color_contado, count in conteo.items():
+        if count > 1:
+            for i, color in reversed(list(enumerate(team_colors))):
+                if color == color_contado:
+                    team_colors[i] = mcolors.to_rgba(color_contado, alpha=0.5)
+                    break
+
     fig, ax = plt.subplots(7, 1, figsize=(6, 12), gridspec_kw={'height_ratios': [0.8, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]})
 
     keys = list(vueltas_pilotos.keys())
     for i, piloto in enumerate(keys):
 
-        color = plotting.get_team_color(vueltas_pilotos[keys[i]]['Team'], session)
+        color = team_colors[i]
         tel_lap = vueltas_pilotos[keys[i]].get_telemetry()
 
         delta_time, ref_tel, compare_tel = utils.delta_time(vueltas_pilotos[keys[0]], vueltas_pilotos[keys[i]])

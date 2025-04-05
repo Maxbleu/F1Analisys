@@ -77,9 +77,9 @@ def track_dominance_analisys(year: int, round: int, session: str, test_number: i
     conteo = Counter(team_colors)
     for color_contado, count in conteo.items():
         if count > 1:
-            for i, color in enumerate(team_colors):
+            for i, color in reversed(list(enumerate(team_colors))):
                 if color == color_contado:
-                    team_colors[i] = mcolors.to_rgba(color_contado, alpha=0.1)
+                    team_colors[i] = mcolors.to_rgba(color_contado, alpha=0.5)
                     break
 
     cmap = ListedColormap(team_colors)
