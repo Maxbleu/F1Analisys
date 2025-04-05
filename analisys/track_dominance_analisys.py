@@ -7,6 +7,8 @@ import matplotlib.colors as mcolors
 from matplotlib.colors import ListedColormap
 from matplotlib.collections import LineCollection
 
+from ia.track_dominance_prediction import track_dominance_prediction
+
 from collections import Counter
 
 from utils._init_ import get_session, try_get_session_laps, send_error_message, get_team_colors
@@ -61,19 +63,11 @@ def track_dominance_analisys(year: int, round: int, session: str, test_number: i
     if not vueltas_pilotos:
         raise ValueError("No valid laps found for analysis.")
 
-    df_vueltas = pd.concat(vueltas_pilotos, names=["Driver"]).reset_index()
+    vueltas_pilotos = dict(sorted(vueltas_pilotos.items(), key=lambda item: item[1]['LapTime'].min()))
+    df_vueltas = pd.concat(vueltas_pilotos, names=['Driver']).reset_index()
 
-    tel_fastest_lap = df_vueltas.loc[df_vueltas["LapTime"] == df_vueltas["LapTime"].min()]
-    x = np.array(tel_fastest_lap['X'].values)
-    y = np.array(tel_fastest_lap['Y'].values)
-
-    points = np.array([x, y]).T.reshape(-1, 1, 2)
-    segments = np.concatenate([points[:-1], points[1:]], axis=1)
-
-    # Driver mapping for color indices
     team_colors = get_team_colors(df_vueltas[["Team", "Driver"]].drop_duplicates(), session)
 
-    #   Comprobar que no hay colores repetidos
     conteo = Counter(team_colors)
     for color_contado, count in conteo.items():
         if count > 1:
@@ -84,20 +78,21 @@ def track_dominance_analisys(year: int, round: int, session: str, test_number: i
 
     cmap = ListedColormap(team_colors)
 
-    driver_map = {driver: i for i, driver in enumerate(df_vueltas["Driver"].drop_duplicates())}
+    drivers_map = {driver: i for i, driver in enumerate(df_vueltas["Driver"].drop_duplicates())}
 
-    mini_sectors = min({len(df_vueltas[df_vueltas["Driver"] == driver]) for driver in df_vueltas["Driver"].drop_duplicates()})
-    
-    leading_driver_per_point = list()
-    telemetrias_por_piloto = {driver: df_vueltas[df_vueltas["Driver"] == driver] for driver in df_vueltas["Driver"].unique()}
-    for i in range(mini_sectors):
-        distances = [telemetrias_por_piloto[driver]["RelativeDistance"].iloc[i] 
-                    for driver in telemetrias_por_piloto.keys()]        
-        leading_driver_per_point.append(np.argmax(distances))
+    leading_driver_per_point = track_dominance_prediction(df_vueltas, drivers_map)
+
+    df_vueltas["LapTime"] = pd.to_timedelta(df_vueltas["LapTime"])
+    tel_fastest_lap = df_vueltas.loc[df_vueltas["LapTime"] == df_vueltas["LapTime"].min()]
+    x = np.array(tel_fastest_lap['X'].values)
+    y = np.array(tel_fastest_lap['Y'].values)
+
+    points = np.array([x, y]).T.reshape(-1, 1, 2)
+    segments = np.concatenate([points[:-1], points[1:]], axis=1)
 
     lc_comp = LineCollection(segments, cmap=cmap, norm=plt.Normalize(-0.5, len(team_colors) - 0.5))
     lc_comp.set_array(leading_driver_per_point)
-    lc_comp.set_linewidth(len(driver_map))
+    lc_comp.set_linewidth(len(drivers_map))
 
     plt.subplots()
     plt.gca().add_collection(lc_comp)
@@ -111,7 +106,7 @@ def track_dominance_analisys(year: int, round: int, session: str, test_number: i
         ticks=np.arange(len(team_colors)),
     )
 
-    cbar.set_ticklabels(driver_map.keys())
+    cbar.set_ticklabels(drivers_map.keys())
 
     plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name}\n"+
             f"Fastest laps comparative {', '.join(df_vueltas['Driver'].drop_duplicates().to_list())}")
