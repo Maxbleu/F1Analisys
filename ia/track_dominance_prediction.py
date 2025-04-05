@@ -1,8 +1,13 @@
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 
+from sklearn.metrics import silhouette_score
+from sklearn.metrics import davies_bouldin_score
+
 import numpy as np
 import pandas as pd
+
+predictions_results = dict()
 
 def interpolate_telemetry(telemetry_df, distances):
     result = pd.DataFrame({'Distance': distances})
@@ -69,7 +74,26 @@ def track_dominance_prediction(vueltas_pilotos, drivers_map:dict):
     X_sc = sc_X.fit_transform(X)
 
     # Aplicamos el algoritmo KMeans
-    kmeans = KMeans(n_clusters=len(drivers), init="k-means++", n_init=10, max_iter=300, random_state=0)
+    kmeans = KMeans(n_clusters=3, n_init=300, tol=0.0001, algorithm="lloyd", random_state=0)
     y_kmeans = kmeans.fit_predict(X_sc)
+
+    # Convertimos los centroides en un DataFrame
+    centroides_df = pd.DataFrame(kmeans.cluster_centers_, columns=X.columns)
+
+    # Calculamos la importancia de cada feature como su varianza entre centroides
+    feature_variances = centroides_df.var().sort_values(ascending=False)
+
+    # Convertimos a dict (puedes limitar a top N si quieres)
+    features_importance = feature_variances.to_dict()
+
+    # Guardamos los resultados en un diccionario
+    key = 'vs'.join(drivers)
+    predictions_results[key] = {
+        "inertia": kmeans.inertia_,
+        "silhouette_score": silhouette_score(X_sc, y_kmeans),
+        "davies_bouldin_score": davies_bouldin_score(X_sc, y_kmeans),
+        "n_clusters": len(drivers),
+        "features_importance": features_importance,
+    }
 
     return y_kmeans

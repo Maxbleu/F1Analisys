@@ -19,6 +19,8 @@ from utils._init_ import convert_img_to_bytes
 from utils._init_ import save_img
 from utils._init_ import get_info_drivers
 
+from ia.track_dominance_prediction import predictions_results
+
 app = FastAPI()
 
 app.mount("/temp", StaticFiles(directory="temp"), name="temp")
@@ -26,6 +28,10 @@ app.mount("/temp", StaticFiles(directory="temp"), name="temp")
 @app.get("/", include_in_schema=False)
 def redirect_to_docs():
     return RedirectResponse(url="/docs")
+
+@app.get("/model/track_dominance/prediction_results", tags=["Models IA"])
+def get_prediction_results():
+    return predictions_results
 
 @app.get("/pretest/top_speed/{year}/{test_number}/{session_number}", tags=["Pretesting sessions"])
 @app.get("/official/top_speed/{year}/{round}/{session}", tags=["Oficial sessions"])
