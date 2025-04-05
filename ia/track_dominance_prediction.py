@@ -63,11 +63,10 @@ def track_dominance_prediction(vueltas_pilotos, drivers_map:dict):
 
     # Declaramos la varaible X
     X = data
-    print(X.head())
 
     # Aplicamos el escalado a los datos
     sc_X = StandardScaler()
-    X_sc = sc_X.fit_transform(data)
+    X_sc = sc_X.fit_transform(X)
 
     # Aplicamos el algoritmo KMeans
     kmeans = KMeans(n_clusters=len(drivers), init="k-means++", n_init=10, max_iter=300, random_state=0)

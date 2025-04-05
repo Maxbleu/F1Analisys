@@ -76,10 +76,7 @@ def track_dominance_analisys(year: int, round: int, session: str, test_number: i
                     team_colors[i] = mcolors.to_rgba(color_contado, alpha=0.5)
                     break
 
-    cmap = ListedColormap(team_colors)
-
     drivers_map = {driver: i for i, driver in enumerate(df_vueltas["Driver"].drop_duplicates())}
-
     leading_driver_per_point = track_dominance_prediction(df_vueltas, drivers_map)
 
     df_vueltas["LapTime"] = pd.to_timedelta(df_vueltas["LapTime"])
@@ -90,11 +87,11 @@ def track_dominance_analisys(year: int, round: int, session: str, test_number: i
     points = np.array([x, y]).T.reshape(-1, 1, 2)
     segments = np.concatenate([points[:-1], points[1:]], axis=1)
 
+    cmap = ListedColormap(team_colors)
     lc_comp = LineCollection(segments, cmap=cmap, norm=plt.Normalize(-0.5, len(team_colors) - 0.5))
     lc_comp.set_array(leading_driver_per_point)
     lc_comp.set_linewidth(len(drivers_map))
 
-    plt.subplots()
     plt.gca().add_collection(lc_comp)
     plt.axis('equal')
     plt.tick_params(labelleft=False, left=False, labelbottom=False, bottom=False)
