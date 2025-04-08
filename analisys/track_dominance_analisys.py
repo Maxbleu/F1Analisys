@@ -77,10 +77,7 @@ def track_dominance_analisys(year: int, round: int, session: str, test_number: i
                             item[1]['LapTime'].max() if isinstance(item[1], pd.DataFrame) else item[1]['LapTime']))
 
     # Keep it in a DataFrame
-    if len(vueltas_pilotos) > 2:
-        df_vueltas = pd.DataFrame(vueltas_pilotos.values())
-    else:
-        df_vueltas = pd.concat(vueltas_pilotos).reset_index()
+    df_vueltas = pd.concat(vueltas_pilotos).reset_index()
     drivers = df_vueltas["Driver"].drop_duplicates().to_list()
 
     # ---   COMPARATIVE BY DELTA TIME   ---
