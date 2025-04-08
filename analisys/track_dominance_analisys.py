@@ -35,11 +35,12 @@ def track_dominance_analisys(year: int, round: int, session: str, test_number: i
     if vueltas_pilotos_dict is None or len(vueltas_pilotos_dict) == 0:
 
         # Select the three best laps of the session
-        df_three_best_race_laps = laps.sort_values(by="LapTime").drop_duplicates(subset="Driver").reset_index(drop=True).head(3)
+        df_laps_ordered = laps.sort_values(by="LapTime")
+        df_best_laps = df_laps_ordered.head(4)
 
         # Keep only the laps of the top 3 drivers in the dictionary
-        for i, piloto in enumerate(df_three_best_race_laps["Driver"]):
-            vueltas_pilotos[piloto] = df_three_best_race_laps.iloc[i]
+        for i, piloto in enumerate(df_best_laps["Driver"]):
+            vueltas_pilotos[piloto] = laps.pick_driver(piloto).pick_lap(df_best_laps.iloc[i]["LapNumber"])
     else:
 
         # Select the laps of the drivers specified by the user
