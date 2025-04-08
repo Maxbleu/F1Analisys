@@ -2,4 +2,4 @@
 *.pyc
 *.pyo
 *.pyd
-./temp/*.png
+**/temp/plot_saved.png

@@ -39,7 +39,7 @@ def track_dominance_analisys(year: int, round: int, session: str, test_number: i
 
         # Keep only the laps of the top 3 drivers in the dictionary
         for i, piloto in enumerate(df_three_best_race_laps["Driver"]):
-            vueltas_pilotos[piloto] = df_three_best_race_laps.iloc[i].reset_index(drop=True)
+            vueltas_pilotos[piloto] = df_three_best_race_laps.iloc[i]
     else:
 
         # Select the laps of the drivers specified by the user
@@ -73,10 +73,14 @@ def track_dominance_analisys(year: int, round: int, session: str, test_number: i
         )
 
     # Order descending the dictionary from the fastest lap to the slowest lap
-    vueltas_pilotos = dict(sorted(vueltas_pilotos.items(), key=lambda item: item[1]['LapTime'].max()))
+    vueltas_pilotos = dict(sorted(vueltas_pilotos.items(), key=lambda item: 
+                            item[1]['LapTime'].max() if isinstance(item[1], pd.DataFrame) else item[1]['LapTime']))
 
     # Keep it in a DataFrame
-    df_vueltas = pd.concat(vueltas_pilotos).reset_index()
+    if len(vueltas_pilotos) > 2:
+        df_vueltas = pd.DataFrame(vueltas_pilotos.values())
+    else:
+        df_vueltas = pd.concat(vueltas_pilotos).reset_index()
     drivers = df_vueltas["Driver"].drop_duplicates().to_list()
 
     # ---   COMPARATIVE BY DELTA TIME   ---
