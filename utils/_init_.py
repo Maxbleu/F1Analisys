@@ -6,3 +6,4 @@ from .utils import get_info_drivers
 from .fastf1_utils import get_team_colors
 from .fastf1_utils import get_session
 from .fastf1_utils import try_get_session_laps
+from .fastf1_utils import get_delta_time

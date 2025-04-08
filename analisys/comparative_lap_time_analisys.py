@@ -1,6 +1,4 @@
 import fastf1
-import fastf1.plotting as plotting
-import fastf1.utils as utils
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -8,7 +6,7 @@ import matplotlib.colors as mcolors
 
 from collections import Counter
 
-from utils._init_ import get_session, try_get_session_laps, send_error_message, get_team_colors
+from utils._init_ import get_session, try_get_session_laps, send_error_message, get_team_colors, get_delta_time
 
 def comparative_lap_time_analisys(year: int, round: int, session: str, test_number: int, session_number: int, vueltas_pilotos_dict: dict):
     """
@@ -67,7 +65,7 @@ def comparative_lap_time_analisys(year: int, round: int, session: str, test_numb
         color = team_colors[i]
         tel_lap = vueltas_pilotos[keys[i]].get_telemetry()
 
-        delta_time, ref_tel, compare_tel = utils.delta_time(vueltas_pilotos[keys[0]], vueltas_pilotos[keys[i]])
+        delta_time, ref_tel, compare_tel = get_delta_time(vueltas_pilotos[keys[0]], vueltas_pilotos[keys[i]])
 
         #   Gráfico de velocidad en distancia
         ax[0].plot(ref_tel["Distance"] if i == 0 else compare_tel["Distance"], ref_tel["Speed"] if i == 0 else compare_tel["Speed"], color=color, label=keys[i])

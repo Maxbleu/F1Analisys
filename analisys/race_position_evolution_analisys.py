@@ -16,7 +16,7 @@ def race_position_evolution_analisys(year: int, round: int, session: str):
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
                             color_scheme='fastf1')
 
-    if (session != "R" and session != "S"): send_error_message(status_code=400, title="Solo carreras", message="Esta gráfico solo está disponible para carreras")
+    if (session != "R" and session != "S"): send_error_message(status_code=400, title="Only races or sprint races", message="This plot is only available for races or sprint races")
     session = get_session(year, round, session)
     laps = try_get_session_laps(session=session)
 
