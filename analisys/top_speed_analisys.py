@@ -37,26 +37,35 @@ def top_speed_analisys(year:int, round:int, session:str, test_number:int, sessio
 
     team_colors = get_team_colors(df_top_speeds, session)
 
-    fig, ax = plt.subplots(figsize=(10, 8))
+    fig, ax = plt.subplots()
 
-    bars = ax.bar(df_top_speeds["Driver"], df_top_speeds["TopSpeed"], color=team_colors)
+    bars = ax.barh(df_top_speeds.index, df_top_speeds["TopSpeed"], color=team_colors)
+    ax.set_yticks(df_top_speeds.index)
+    ax.set_yticklabels(df_top_speeds["Driver"])
 
-    plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name} | Top Speed")
-    plt.xlabel('Drivers')
-    plt.ylabel('Speed')
+    plt.xlabel('Speed (km/h)')
+    plt.ylabel('Drivers')
+
+    ax.invert_yaxis()
+    ax.set_axisbelow(True)
+    ax.xaxis.grid(True)
 
     iterator = 0
     for bar in bars:
         top_speed = df_top_speeds.iloc[iterator]["TopSpeed"]
-        height = bar.get_height()
+        width = bar.get_width()
         ax.text(
-            bar.get_x() + bar.get_width() / 2,
-            height + 1,
+            width+0.05,
+            bar.get_y() + bar.get_height()/2,
             f"{top_speed}",
-            ha='center',
-            va='bottom',
+            va='center',
+            ha='left',
             color='white',
             fontsize=10
         )
         iterator += 1
-    plt.tight_layout()
+
+    top_speed = df_top_speeds.iloc[0]["TopSpeed"]
+    ax.set_xlim(0, top_speed * 1.10)
+
+    plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name} | Top Speed")
