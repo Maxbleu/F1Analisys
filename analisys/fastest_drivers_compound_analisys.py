@@ -5,21 +5,20 @@ import matplotlib.pyplot as plt
 
 from utils._init_ import get_team_colors, get_session, try_get_session_laps
 
-def fastest_drivers_compound_analisys(year: int, round: int, session: str, test_number: int, session_number: int):
+def fastest_drivers_compound_analisys(type_event:str, year: int, event: int, session: str):
     """
     Analyzes the fastest drivers each compound in specific session
 
     Parameters:
+    type_event (str): The type of event ('official', 'pretest').
     year (int): The year of the race.
     round (int): The round number of the race.
     session (str): The session type (e.g., 'FP1', 'FP2', 'FP3', 'Q', 'S', 'SS', 'SQ', 'R').
-    test_number (int): The test number of the session.
-    session_number (int): The session number of the session.
     """
 
-    fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False)
+    fastf1.plotting.setup_mpl(mpl_timedelta_support=True, misc_mpl_mods=True, color_scheme='fastf1')
 
-    session = get_session(year, round, session, test_number, session_number)
+    session = get_session(type_event, year, event, session)
     laps = try_get_session_laps(session=session)
 
     laps["LapTime"] = pd.to_timedelta(laps["LapTime"])

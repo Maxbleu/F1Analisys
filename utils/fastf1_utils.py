@@ -5,17 +5,17 @@ import numpy as np
 
 from utils._init_ import send_error_message
 
-def get_session(year, round=None, session=None, test_number=None, session_number=None):
+def get_session(type_event, year, event, session):
     try:
-        if session is not None and round is not None:
-                session = fastf1.get_session(year, round, session)
-        elif test_number is not None and session_number is not None:
-            session = fastf1.get_testing_session(year, test_number, session_number)
+        if type_event == "official":
+                session = fastf1.get_session(year, event, session)
+        elif type_event == "pretest":
+            session = fastf1.get_testing_session(year, event, session)
     except Exception as e:
         send_error_message(
             status_code=404, 
             title="Selected session does not exist", 
-            message=f"The session {year}/{test_number if not round else round}/{session_number if not session else session} does not exist or has not been loaded yet."
+            message=f"The session {year}/{event}/{session} does not exist or has not been loaded yet."
         )
     return session
 

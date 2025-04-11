@@ -1,26 +1,23 @@
 import matplotlib.pyplot as plt
 import fastf1.plotting
 
-import pandas as pd
-
 from utils._init_ import get_session, try_get_session_laps
 
-def long_runs_analisys(year: int, round: int, session: str, test_number: int, session_number : int, vueltas_pilotos: dict):
+def long_runs_analisys(type_event:str, year: int, event: int, session: str, vueltas_pilotos: dict):
     """
     Analyzes long runs specific drivers in sessions.
 
     Parameters:
+    type_event (str): The type of event ('official', 'pretest').
     year (int): The year of the race.
     round (int): The round number of the race.
     session (str): The session type (e.g., 'FP1', 'FP2', 'FP3', 'Q', 'S', 'SS', 'SQ', 'R').
-    test_number (int): The test number of the session.
-    session_number (int): The session number of the session.
     vueltas_pilotos (dict): A dictionary with the laps of each driver in the session
     """
 
-    fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False, color_scheme='fastf1')
+    fastf1.plotting.setup_mpl(mpl_timedelta_support=True, misc_mpl_mods=True, color_scheme='fastf1')
 
-    session = get_session(year, round, session, test_number, session_number)
+    session = get_session(type_event, year, event, session)
     laps = try_get_session_laps(session=session)
 
     fig, ax = plt.subplots()
@@ -37,6 +34,7 @@ def long_runs_analisys(year: int, round: int, session: str, test_number: int, se
         drv_laps["LapTime"] = drv_laps["LapTime"].dt.total_seconds()
         ax.plot(drv_laps['LapNumber'], drv_laps['LapTime'], label=piloto, **style)
 
+    ax.xaxis.grid(True, which='major', linestyle='--', color='black', zorder=-1000)
     ax.set_ylabel("LapTime")
     ax.set_xlabel("LapNumber")
     plt.legend()

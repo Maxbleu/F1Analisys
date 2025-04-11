@@ -11,21 +11,20 @@ from collections import Counter
 
 from utils._init_ import get_session, try_get_session_laps, send_error_message, get_team_colors, get_delta_time
 
-def track_dominance_analisys(year: int, round: int, session: str, test_number: int, session_number: int, vueltas_pilotos_dict: dict):
+def track_dominance_analisys(type_event:str, year: int, event: int, session: str, vueltas_pilotos_dict: dict):
     """
     Analyzes the track dominance of the top 3 drivers in a specific session.
     
     Parameters:
+    type_event (str): The type of event ('official', 'pretest').
     year (int): The year of the race.
     round (int): The round number of the race.
     session (str): The session type (e.g., 'FP1', 'FP2', 'FP3', 'Q', 'S', 'SS', 'SQ', 'R').
-    test_number (int): The test number of the session.
-    session_number (int): The session number of the session.
     vueltas_pilotos (dict): A dictionary with the laps of each driver.
     """
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False, color_scheme='fastf1')
 
-    session = get_session(year, round, session, test_number, session_number)
+    session = get_session(type_event, year, event, session)
     laps = try_get_session_laps(session)
     laps["LapTime"] = pd.to_timedelta(laps["LapTime"])
 
@@ -163,3 +162,4 @@ def track_dominance_analisys(year: int, round: int, session: str, test_number: i
 
     plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name}\n"+
             f"Fastest laps comparative {', '.join(df_vueltas['Driver'].drop_duplicates().to_list())}")
+    plt.tight_layout()

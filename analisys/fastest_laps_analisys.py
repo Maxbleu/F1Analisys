@@ -7,21 +7,20 @@ from fastf1.core import Laps
 
 from utils._init_ import get_team_colors, get_session, try_get_session_laps
 
-def fastest_laps_analisys(year: int, round: int, session: str, test_number: int, session_number: int):
+def fastest_laps_analisys(type_event:str, year: int, event: int, session: str):
     """
     Analyzes the fastest laps each driver in specific session
 
     Parameters:
+    type_event (str): The type of event ('official', 'pretest').
     year (int): The year of the race.
     round (int): The round number of the race.
     session (str): The session type (e.g., 'FP1', 'FP2', 'FP3', 'Q', 'S', 'SS', 'SQ', 'R').
-    test_number (int): The test number of the session.
-    session_number (int): The session number of the session.
     """
 
-    fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False)
+    fastf1.plotting.setup_mpl(mpl_timedelta_support=True, misc_mpl_mods=True, color_scheme='fastf1')
 
-    session = get_session(year, round, session, test_number, session_number)
+    session = get_session(type_event, year, event, session)
     laps = try_get_session_laps(session)
 
     drivers = pd.unique(laps['Driver'])
@@ -41,7 +40,7 @@ def fastest_laps_analisys(year: int, round: int, session: str, test_number: int,
 
     fig, ax = plt.subplots()
     ax.barh(fastest_laps.index, fastest_laps['LapTimeDelta'],
-            color=team_colors)
+            color=team_colors, edgecolor='grey')
     ax.set_yticks(fastest_laps.index)
     ax.set_yticklabels(fastest_laps['Driver'])
 

@@ -8,31 +8,33 @@ from collections import Counter
 
 from utils._init_ import get_session, try_get_session_laps, send_error_message, get_team_colors, get_delta_time
 
-def comparative_lap_time_analisys(year: int, round: int, session: str, test_number: int, session_number: int, vueltas_pilotos_dict: dict):
+def comparative_lap_time_analisys(type_event:str, year: int, event: int, session: str, vueltas_pilotos_dict: dict):
     """
     Analisys of one lap time from two drivers in a speciffic session.
 
     Parameters:
+    type_event (str): The type of event ('official', 'pretest').
     year (int): The year of the race.
     round (int): The round number of the race.
     session (str): The session type (e.g., 'FP1', 'FP2', 'FP3', 'Q', 'S', 'SS', 'SQ', 'R').
-    test_number (int): The test number of the session.
-    session_number (int): The session number of the session.
     vueltas_pilotos (dict): A dictionary with the laps of each driver.
     """
 
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False)
 
-    session = get_session(year, round, session, test_number, session_number)
+    session = get_session(type_event, year, event, session)
     laps = try_get_session_laps(session=session)
 
     laps["LapTime"] = pd.to_timedelta(laps["LapTime"]) 
     vueltas_pilotos = {}
     if vueltas_pilotos_dict is None or len(vueltas_pilotos_dict) == 0:
-        df_three_best_race_laps = laps.sort_values(by="LapTime").drop_duplicates(subset="Driver").reset_index(drop=True).head(3)
-        for i, piloto in enumerate(df_three_best_race_laps["Driver"]):
-            df_telemetria = df_three_best_race_laps.iloc[i:i+1]
-            vueltas_pilotos[piloto] = df_telemetria.iloc[0]
+        # Select the three best laps of the session
+        df_laps_ordered = laps.sort_values(by="LapTime")
+        df_best_laps = df_laps_ordered.head(3)
+
+        # Keep only the laps of the top 3 drivers in the dictionary
+        for i, piloto in enumerate(df_best_laps["Driver"]):
+            vueltas_pilotos[piloto] = laps.pick_driver(piloto).pick_lap(df_best_laps.iloc[i]["LapNumber"])
     else:
         for piloto in vueltas_pilotos_dict.keys():
             vuelta_seleccionada = laps.loc[laps["Driver"] == piloto].loc[laps["LapNumber"] == vueltas_pilotos_dict[piloto][0]]
@@ -114,5 +116,4 @@ def comparative_lap_time_analisys(year: int, round: int, session: str, test_numb
 
     plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name}\n"
                 f"Lap time comparative of {', '.join(vueltas_pilotos_dict.keys())}")
-
     plt.tight_layout()
