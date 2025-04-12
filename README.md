@@ -1,3 +1,5 @@
+<a href="https://www.buymeacoffee.com/dataanalisv"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=dataanalisv&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff" /></a>
+
 # F1Analisys
 
 ![Estado](https://img.shields.io/badge/Status-developing-yellow) ![Framework](https://img.shields.io/badge/Framework-FastAPI-red) ![Licencia](https://img.shields.io/badge/Licencia-MIT-yellow)
