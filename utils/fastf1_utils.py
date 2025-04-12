@@ -30,7 +30,7 @@ def try_get_session_laps(session):
     laps = None
     try:
         session.load()
-        laps = session.laps.pick_not_deleted()
+        laps = session.laps.pick_not_deleted().pick_wo_box()
     except Exception as e:
         send_error_message(
             status_code=404, 

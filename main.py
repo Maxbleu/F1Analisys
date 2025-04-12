@@ -182,10 +182,11 @@ def get_long_runs(
     event: int = None, 
     session: str = None,
     pilotos_info: str = None,
+    threshold: float = 1.05,
     convert_to_bytes: bool = False
     ):
 
     vueltas_pilotos_dict = get_info_drivers(pilotos_info)
-    long_runs_analisys(type_event, year, event, session, vueltas_pilotos_dict)
+    long_runs_analisys(type_event, year, event, session, threshold, vueltas_pilotos_dict)
     return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing
