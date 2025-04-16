@@ -126,7 +126,8 @@ def get_race_position_evolution(
     convert_to_bytes: bool = False
     ):
 
-    race_position_evolution_analisys(year, event, session)
+    type_event = "official"
+    race_position_evolution_analisys(type_event, year, event, session)
     return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing
 

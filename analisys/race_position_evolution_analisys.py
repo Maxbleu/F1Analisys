@@ -3,7 +3,7 @@ import fastf1.plotting
 
 from utils._init_ import get_session, send_error_message, try_get_session_laps
 
-def race_position_evolution_analisys(year: int, event: int, session: str):
+def race_position_evolution_analisys(type_event:str, year: int, event: int, session: str):
     """
     Analyzes the race position evolution of the drivers in a race session.
 
@@ -17,7 +17,7 @@ def race_position_evolution_analisys(year: int, event: int, session: str):
                             color_scheme='fastf1')
 
     if (session != "R" and session != "S"): send_error_message(status_code=400, title="Only races or sprint races", message="This plot is only available for races or sprint races")
-    session = get_session(year, event, session)
+    session = get_session(type_event, year, event, session)
     laps = try_get_session_laps(session=session)
 
     fig, ax = plt.subplots(figsize=(10.0, 6))
@@ -30,8 +30,7 @@ def race_position_evolution_analisys(year: int, event: int, session: str):
                                                 style=['color', 'linestyle'],
                                                 session=session)
 
-        ax.plot(drv_laps['LapNumber'], drv_laps['Position'],
-                label=abb, **style)
+        ax.plot(drv_laps['LapNumber'], drv_laps['Position'], label=abb, **style)
 
     ax.set_ylim([20.5, 0.5])
     ax.set_yticks([1, 5, 10, 15, 20])
