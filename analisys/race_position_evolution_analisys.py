@@ -16,12 +16,18 @@ def race_position_evolution_analisys(type_event:str, year: int, event: int, sess
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False,
                             color_scheme='fastf1')
 
+    # Check if the session is valid
     if (session != "R" and session != "S"): send_error_message(status_code=400, title="Only races or sprint races", message="This plot is only available for races or sprint races")
+
+    # Get the session
     session = get_session(type_event, year, event, session)
+
+    # Get the laps data
     laps = try_get_session_laps(session=session)
 
     fig, ax = plt.subplots(figsize=(10.0, 6))
 
+    # Show laps in the plot
     for drv in session.drivers:
         drv_laps = laps.pick_driver(drv)
 
@@ -32,11 +38,5 @@ def race_position_evolution_analisys(type_event:str, year: int, event: int, sess
 
         ax.plot(drv_laps['LapNumber'], drv_laps['Position'], label=abb, **style)
 
-    ax.set_ylim([20.5, 0.5])
-    ax.set_yticks([1, 5, 10, 15, 20])
-    ax.set_xlabel('Lap')
-    ax.set_ylabel('Position')
-
-    ax.legend(bbox_to_anchor=(1.0, 1.02))
     plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name} | Results")
     plt.tight_layout()
