@@ -26,11 +26,18 @@ def get_team_colors(df, session):
         team_colors.append(color)
     return team_colors
 
-def try_get_session_laps(session):
+def try_get_session_laps(session, laps_not_deleted=True, laps_not_wo_box=True):
     laps = None
     try:
         session.load()
-        laps = session.laps.pick_not_deleted().pick_wo_box()
+        if laps_not_deleted & laps_not_wo_box:
+            laps = session.laps.pick_not_deleted().pick_wo_box()
+        elif laps_not_deleted:
+            laps = session.laps.pick_not_deleted()
+        elif laps_not_wo_box:
+            laps = session.laps.pick_wo_box()
+        else:
+            laps = session.laps
     except Exception as e:
         send_error_message(
             status_code=404, 
