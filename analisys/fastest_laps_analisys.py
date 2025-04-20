@@ -3,7 +3,6 @@ import pandas as pd
 from timple.timedelta import strftimedelta
 
 import fastf1.plotting
-from fastf1.core import Laps
 
 from utils._init_ import get_team_colors, get_session, try_get_session_laps
 
@@ -25,16 +24,21 @@ def fastest_laps_analisys(type_event:str, year: int, event: int, session: str):
 
     drivers = pd.unique(laps['Driver'])
 
-    list_fastest_laps = list()
+    fastest_laps = pd.DataFrame()
     for drv in drivers:
-        drvs_fastest_lap = laps.pick_driver(drv).pick_fastest()
-        list_fastest_laps.append(drvs_fastest_lap)
-    fastest_laps = Laps(list_fastest_laps) \
-        .sort_values(by='LapTime') \
-        .reset_index(drop=True)
+        driver_laps = laps.pick_driver(drv)
+        if not driver_laps.empty:
+            fastest_lap = driver_laps.pick_fastest()
+            if fastest_lap is not None:
+                fastest_laps = pd.concat([fastest_laps, pd.DataFrame([fastest_lap])], ignore_index=True)
 
-    pole_lap = fastest_laps.pick_fastest()
-    fastest_laps['LapTimeDelta'] = fastest_laps['LapTime'] - pole_lap['LapTime']
+    if not fastest_laps.empty:
+        # Sort by lap time
+        fastest_laps = fastest_laps.sort_values(by='LapTime').reset_index(drop=True)
+        
+        # Get the pole lap and calculate deltas
+        pole_lap = fastest_laps.iloc[0]
+        fastest_laps['LapTimeDelta'] = fastest_laps['LapTime'] - pole_lap['LapTime']
 
     team_colors = get_team_colors(fastest_laps, session)
 
