@@ -37,7 +37,7 @@ def long_runs_analisys(type_event:str, year: int, event: int, session: str, thre
         style['marker'] = 'o'
 
         drv_laps["LapTime"] = drv_laps["LapTime"].dt.total_seconds()
-        ax.plot(drv_laps.index, drv_laps['LapTime'], label=piloto, **style)
+        ax.plot(drv_laps["LapNumber"], drv_laps['LapTime'], label=piloto, **style)
 
     ax.xaxis.grid(True, which='major', linestyle='--', color='black', zorder=-1000)
     ax.set_ylabel("LapTime")
