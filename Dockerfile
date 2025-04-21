@@ -9,6 +9,8 @@ COPY . .
 
 ENV PYTHONPATH=/app
 
+RUN chmod +x /app/start.sh
+
 EXPOSE 8000
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--reload"]
+CMD ["/app/start.sh"]
