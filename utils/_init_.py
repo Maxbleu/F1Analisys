@@ -1,9 +1,14 @@
-from .utils import format_time_mmssmmm
-from .utils import convert_img_to_bytes
-from .utils import save_img
-from .utils import send_error_message
-from .utils import get_info_drivers
-from .fastf1_utils import get_team_colors
-from .fastf1_utils import get_session
-from .fastf1_utils import try_get_session_laps
-from .fastf1_utils import get_delta_time
+from .utils import (
+    format_time_mmssmmm,
+    convert_img_to_bytes,
+    save_img,
+    send_error_message,
+    get_info_drivers
+)
+
+from .fastf1_utils import (
+    get_team_colors,
+    get_session,
+    try_get_session_laps,
+    get_delta_time
+)

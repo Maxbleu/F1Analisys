@@ -67,5 +67,5 @@ def top_speed_analisys(type_event:str, year:int, event:int, session:str):
     top_speed = df_top_speeds.iloc[0]["TopSpeed"]
     ax.set_xlim(0, top_speed * 1.10)
 
-    plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name} | Top Speed")
+    plt.suptitle(f'{session.event["EventName"]} {session.event.year} {session.name} | Top Speed')
     plt.tight_layout()

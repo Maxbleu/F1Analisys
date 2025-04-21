@@ -128,7 +128,7 @@ def race_position_evolution_analisys(type_event:str, year: int, event: int, sess
 
     # Create custom badges for the Y-axis
     positions = range(1, len(session.results) + 1)
-    y_labels = [f"{pos}. {final_positions.get(pos, '')}" for pos in positions]
+    y_labels = [f'{pos}. {final_positions.get(pos, "")}' for pos in positions]
 
     # Configure the Y-axis with custom labels
     ax.set_yticks(positions)
@@ -143,5 +143,5 @@ def race_position_evolution_analisys(type_event:str, year: int, event: int, sess
     # Invert Y-axis so position 1 is at the top
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.1), ncol=len(session.drivers)//2)
 
-    plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name} | Results")
+    plt.suptitle(f'{session.event["EventName"]} {session.event.year} {session.name} | Results')
     plt.tight_layout()

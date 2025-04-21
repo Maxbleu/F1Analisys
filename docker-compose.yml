@@ -1,0 +1,9 @@
+name: f1analisys
+
+services:
+  fastapi:
+    build: 
+      context: .
+      dockerfile: Dockerfile.fastapi
+    ports:
+      - "8000:8000"

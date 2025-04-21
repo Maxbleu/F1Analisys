@@ -69,5 +69,5 @@ def lap_time_average_analisys(type_event:str, year: int, event: int, session: st
         va='center', ha='left', color='white')
     ax.set_xlim(0, max(time_diff_to_pole) * 1.15)
 
-    plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name} | Lap Time Average")
+    plt.suptitle(f'{session.event["EventName"]} {session.event.year} {session.name} | Lap Time Average')
     plt.tight_layout()

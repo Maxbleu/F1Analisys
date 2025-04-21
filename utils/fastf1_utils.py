@@ -15,7 +15,7 @@ def get_session(type_event, year, event, session):
         send_error_message(
             status_code=404, 
             title="Selected session does not exist", 
-            message=f"The session {year}/{event}/{session} does not exist or has not been loaded yet."
+            message=f'The session {year}/{event}/{session} does not exist or has not been loaded yet.'
         )
     return session
 
@@ -42,7 +42,7 @@ def try_get_session_laps(session, laps_not_deleted=True, laps_not_wo_box=True):
         send_error_message(
             status_code=404, 
             title="No laps available", 
-            message=f"The data for the session {session.event['EventName']} {session.event.year} {session.name} does not exist or has not been loaded yet."
+            message=f'The data for the session {session.event["EventName"]} {session.event.year} {session.name} does not exist or has not been loaded yet.'
         )
     return laps
 

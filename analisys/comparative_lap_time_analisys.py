@@ -42,7 +42,7 @@ def comparative_lap_time_analisys(type_event:str, year: int, event: int, session
         for piloto in vueltas_pilotos_dict.keys():
             vuelta_seleccionada = laps.loc[laps["Driver"] == piloto].loc[laps["LapNumber"] == vueltas_pilotos_dict[piloto][0]]
             if vuelta_seleccionada.empty:
-                send_error_message(status_code=404, title="Laps not enabled", message=f"No exists {piloto} laps in {session.event["EventName"]} {session.event.year} {session.name}")
+                send_error_message(status_code=404, title="Laps not enabled", message=f'No exists {piloto} laps in {session.event["EventName"]} {session.event.year} {session.name}')
             vueltas_pilotos[piloto] = vuelta_seleccionada
 
     # Check if laps are valid
@@ -105,7 +105,7 @@ def comparative_lap_time_analisys(type_event:str, year: int, event: int, session
 
     ax[0].vlines(x=circuit_info.corners['Distance'], ymin=v_min-20, ymax=v_max+20, linestyles='dotted', colors='grey')
     for _, corner in circuit_info.corners.iterrows():
-        txt = f"{corner['Number']}{corner['Letter']}"
+        txt = f'{corner["Number"]}{corner["Letter"]}'
         ax[0].text(corner['Distance'], v_min-20, txt,
                 va='center_baseline', ha='center', size='small')
 
@@ -118,6 +118,6 @@ def comparative_lap_time_analisys(type_event:str, year: int, event: int, session
         ax[i].set_ylabel(y_labels[i])
         ax[i].xaxis.grid(True, which='major', linestyle='--', color='black', zorder=-1000)
 
-    plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name}\n"
-                f"Lap time comparative of {', '.join(keys)}")
+    plt.suptitle(f'{session.event["EventName"]} {session.event.year} {session.name}\n'
+                f'Lap time comparative of {", ".join(keys)}')
     plt.tight_layout()

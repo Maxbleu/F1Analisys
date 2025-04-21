@@ -68,9 +68,9 @@ def fastest_drivers_compound_analisys(type_event:str, year: int, event: int, ses
         driver = fastest_lap['Driver']
         fastest_time = fastest_lap['AvgLapTime']
 
-        ax.set_title(f"{key} average fastest\n {driver} - {strftimedelta(fastest_time, '%m:%s.%ms')}", fontsize=11)
+        ax.set_title(f'{key} average fastest\n {driver} - {strftimedelta(fastest_time, "%m:%s.%ms")}', fontsize=11)
         ax.tick_params(axis='x', rotation=45)
 
-    plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name}\n"
-            f"Drivers average lap time by compound")
+    plt.suptitle(f'{session.event["EventName"]} {session.event.year} {session.name}\n'
+            f'Drivers average lap time by compound')
     plt.tight_layout()

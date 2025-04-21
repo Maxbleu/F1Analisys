@@ -23,10 +23,11 @@ F1 project to analyze the data of the F1 championship making use of the pandas l
 
 # Sections
 1. [Instalation](#instalation)
-2. [Run](#run)
-3. [Get analisys](#get-analisys)
-4. [Swagger](#swagger)
-5. [Contributing](#contributing)
+2. [Requirements](#requirements)
+3. [Run](#run)
+4. [Get analisys](#get-analisys)
+5. [Swagger](#swagger)
+6. [Contributing](#contributing)
 
 
 ## Instalation
@@ -37,18 +38,29 @@ To install the repository, you can make a fork of the repository or cloning my r
 git clone git@github.com:Maxbleu/F1Analisys.git
 ```
 
-Later , you can install the required libraries using pip with the following command:
+## Requirements
+This is the requirements needs to run this proyect.
 
-```commandline
-pip install -r requirements.txt
-```
+- [Docker Desktop](https://www.docker.com/)
+
+- <details open>
+    <summary>Docker</summary>
+    <pre><code class="language-bash">pip install docker</code></pre>
+</details>
+
+
 
 ### Run
 
-To run the project, you need to execute the following command:
+How this proyect use **Docker** to run it, so you will need to create a new image of the proyect a it will start to run the application:
 
 ```commandline
-python -m uvicorn main:app --reload
+docker-compose up --build -d
+```
+
+After that, if you want to stop the image, you will need this command:
+```commandline
+docker compose down
 ```
 
 

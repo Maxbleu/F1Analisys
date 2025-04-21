@@ -31,7 +31,7 @@ def braking_analisys(type_event:str, year:int, event:int, session:str):
             telemetry["Brake"] = 1 - telemetry["Throttle"]
             all_telemetry.append(telemetry)
         except Exception as e:
-            print(f"Error processing telemetry for lap {lap['LapNumber']} of driver {lap['Driver']}: {e}")
+            print(f'Error processing telemetry for lap {lap["LapNumber"]} of driver {lap["Driver"]}: {e}')
 
     all_telemetry_df = pd.concat(all_telemetry, ignore_index=True)
 
@@ -66,5 +66,5 @@ def braking_analisys(type_event:str, year:int, event:int, session:str):
         va='center', ha='left', color='white')
     ax.set_xlim(0, max(time_diff_to_pole) * 1.15)
 
-    plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name} | Brake Usage")
+    plt.suptitle(f'{session.event["EventName"]} {session.event.year} {session.name} | Brake Usage')
     plt.tight_layout()

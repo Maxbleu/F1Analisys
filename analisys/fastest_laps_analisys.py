@@ -63,6 +63,6 @@ def fastest_laps_analisys(type_event:str, year: int, event: int, session: str):
 
     lap_time_string = strftimedelta(pole_lap['LapTime'], '%m:%s.%ms')
 
-    plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name}\n"
-                f"Fastest Lap: {lap_time_string} ({pole_lap['Driver']})")
+    plt.suptitle(f'{session.event["EventName"]} {session.event.year} {session.name}\n'
+                f'Fastest Lap: {lap_time_string} ({pole_lap["Driver"]})')
     plt.tight_layout()

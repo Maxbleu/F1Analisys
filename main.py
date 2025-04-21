@@ -2,22 +2,11 @@ from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
-from analisys._init_ import track_dominance_analisys
-from analisys._init_ import top_speed_analisys
-from analisys._init_ import lap_time_average_analisys
-from analisys._init_ import team_performace_analisys
-from analisys._init_ import lap_time_distribution_analisys
-from analisys._init_ import fastest_laps_analisys
-from analisys._init_ import race_position_evolution_analisys
-from analisys._init_ import fastest_drivers_compound_analisys
-from analisys._init_ import comparative_lap_time_analisys
-from analisys._init_ import braking_analisys
-from analisys._init_ import throttle_analisys
-from analisys._init_ import long_runs_analisys
+from analisys import track_dominance_analisys, top_speed_analisys, lap_time_average_analisys, team_performace_analisys, \
+    lap_time_distribution_analisys, fastest_laps_analisys, race_position_evolution_analisys, fastest_drivers_compound_analisys, \
+    comparative_lap_time_analisys, braking_analisys, throttle_analisys, long_runs_analisys
 
-from utils._init_ import convert_img_to_bytes
-from utils._init_ import save_img
-from utils._init_ import get_info_drivers
+from utils._init_ import convert_img_to_bytes, save_img, get_info_drivers
 
 app = FastAPI()
 

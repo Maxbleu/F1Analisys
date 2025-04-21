@@ -44,6 +44,6 @@ def long_runs_analisys(type_event:str, year: int, event: int, session: str, thre
     ax.set_xlabel("LapNumber")
     plt.legend()
 
-    plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name}\n"
-            f"Long runs comparative of {', '.join(vueltas_pilotos.keys())}")
+    plt.suptitle(f'{session.event["EventName"]} {session.event.year} {session.name}\n'
+            f'Long runs comparative of {", ".join(vueltas_pilotos.keys())}')
     plt.tight_layout()

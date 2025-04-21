@@ -51,7 +51,7 @@ def lap_time_distribution_analisys(year: int, round: int, session: str):
 
     ax.set_xlabel("Driver")
     ax.set_ylabel("Lap Time (s)")
-    plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name} | Lap Pace Top 10")
+    plt.suptitle(f'{session.event["EventName"]} {session.event.year} {session.name} | Lap Pace Top 10')
     sns.despine(left=True, bottom=True)
 
     ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: format_time_mmssmmm(x)))

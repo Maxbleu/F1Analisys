@@ -50,7 +50,7 @@ def track_dominance_analisys(type_event:str, year: int, event: int, session: str
                 send_error_message(
                     status_code=400,
                     title="Parameter Error",
-                    message=f"You must specify a driver and a lap number for session {session.event['EventName']} {session.event.year} {session.name}"
+                    message=f'You must specify a driver and a lap number for session {session.event["EventName"]} {session.event.year} {session.name}'
                 )
 
             vuelta_seleccionada = laps.pick_driver(piloto).pick_lap(lap_number[0])
@@ -60,7 +60,7 @@ def track_dominance_analisys(type_event:str, year: int, event: int, session: str
                 send_error_message(
                     status_code=404,
                     title="No Laps Available",
-                    message=f"No laps exist for {piloto} in the session {session.event['EventName']} {session.event.year} {session.name}"
+                    message=f'No laps exist for {piloto} in the session {session.event["EventName"]} {session.event.year} {session.name}'
                 )
             vueltas_pilotos[piloto] = vuelta_seleccionada
 
@@ -69,7 +69,7 @@ def track_dominance_analisys(type_event:str, year: int, event: int, session: str
         send_error_message(
             status_code=404,
             title="No Laps Available",
-            message=f"No laps exist for the selected drivers in the session {session.event['EventName']} {session.event.year} {session.name}"
+            message=f'No laps exist for the selected drivers in the session {session.event["EventName"]} {session.event.year} {session.name}'
         )
 
     # Order descending the dictionary from the fastest lap to the slowest lap
@@ -160,6 +160,6 @@ def track_dominance_analisys(type_event:str, year: int, event: int, session: str
     drivers_map = {driver: i for i, driver in enumerate(df_vueltas["Driver"].drop_duplicates())}
     cbar.set_ticklabels(drivers_map.keys())
 
-    plt.suptitle(f"{session.event['EventName']} {session.event.year} {session.name}\n"+
-            f"Fastest laps comparative {', '.join(df_vueltas['Driver'].drop_duplicates().to_list())}")
+    plt.suptitle(f'{session.event["EventName"]} {session.event.year} {session.name}\n' +
+                    f'Fastest laps comparative {", ".join(df_vueltas["Driver"].drop_duplicates().to_list())}')
     plt.tight_layout()
