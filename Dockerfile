@@ -11,6 +11,6 @@ ENV PYTHONPATH=/app
 
 RUN chmod +x /app/start.sh
 
-EXPOSE 8000
+EXPOSE $PORT
 
 CMD ["/app/start.sh"]
