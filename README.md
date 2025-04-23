@@ -52,17 +52,16 @@ This is the requirements needs to run this proyect.
 
 ### Run
 
-How this proyect use **Docker** to run it, so you will need to create a new image of the proyect a it will start to run the application:
+How this proyect use **Docker** to run it, so you will need to create a new image of the proyect.
 
 ```commandline
-docker-compose up --build -d
+docker build -t f1analisys:latest .
 ```
 
-After that, if you want to stop the image, you will need this command:
+To run the project, execute the following command:
 ```commandline
-docker compose down
+docker run -p 8000:8000 f1analisys:latest
 ```
-
 
 ## Get analisys
 

@@ -8,9 +8,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 ENV PYTHONPATH=/app
+ENV PORT=8000
 
-RUN chmod +x /app/start.sh
+EXPOSE 8000
 
-EXPOSE $PORT
-
-CMD ["/app/start.sh"]
+CMD sh -c "uvicorn main:app --host 0.0.0.0 --port ${PORT} --reload"
