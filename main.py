@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
-from analisys import track_dominance_analisys, top_speed_analisys, lap_time_average_analisys, team_performace_analisys, \
+from analisys._init_ import track_dominance_analisys, top_speed_analisys, lap_time_average_analisys, team_performace_analisys, \
     lap_time_distribution_analisys, fastest_laps_analisys, race_position_evolution_analisys, fastest_drivers_compound_analisys, \
     comparative_lap_time_analisys, braking_analisys, throttle_analisys, long_runs_analisys
 
