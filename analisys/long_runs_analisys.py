@@ -1,10 +1,12 @@
 import matplotlib.pyplot as plt
 
 import fastf1.plotting as f1_plotting
-
 from utils._init_ import get_session, try_get_session_laps
 
-def long_runs_analisys(type_event:str, year: int, event: int, session: str, threshold:float, vueltas_pilotos: dict):
+import numpy as np
+from scipy.interpolate import make_interp_spline
+
+def long_runs_analisys(type_event:str, year: int, event: int, session: str, threshold:float, vueltas_pilotos: dict, indexing: str):
     """
     Analyzes long runs specific drivers in sessions.
 
@@ -15,6 +17,7 @@ def long_runs_analisys(type_event:str, year: int, event: int, session: str, thre
     session (str): The session type (e.g., 'FP1', 'FP2', 'FP3', 'Q', 'S', 'SS', 'SQ', 'R').
     threshold (float): The threshold for quick laps.
     vueltas_pilotos (dict): A dictionary with the laps of each driver in the session
+    indexing (str): The indexing method to use ('index', 'lap number')
     """
 
     f1_plotting.setup_mpl(mpl_timedelta_support=True, misc_mpl_mods=True, color_scheme='fastf1')
@@ -34,10 +37,18 @@ def long_runs_analisys(type_event:str, year: int, event: int, session: str, thre
         style = f1_plotting.get_driver_style(identifier=abb,
                                                 style=['color', 'linestyle'],
                                                 session=session)
-        style['marker'] = 'o'
 
         drv_laps["LapTime"] = drv_laps["LapTime"].dt.total_seconds()
-        ax.plot(drv_laps["LapNumber"], drv_laps['LapTime'], label=piloto, **style)
+        if indexing == 'index':
+            x_data = drv_laps.index
+        else:
+            x_data = drv_laps["LapNumber"]
+        ax.scatter(x_data, drv_laps["LapTime"], **style)
+
+        x_smooth = np.linspace(min(x_data), max(x_data), 150)
+        spl = make_interp_spline(x_data, drv_laps["LapTime"], k=2)
+        y_smooth = spl(x_smooth)
+        ax.plot(x_smooth, y_smooth, label=piloto, **style)
 
     ax.xaxis.grid(True, which='major', linestyle='--', color='black', zorder=-1000)
     ax.set_ylabel("LapTime")
