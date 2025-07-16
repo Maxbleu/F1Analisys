@@ -51,7 +51,7 @@ def show_checked_flag(ax, last_position, last_lap_number):
         edgecolors='none', 
     )
 
-def show_compound_used_during_race(ax, session, drv, drv_laps, drivers_retired):
+def show_compound_used_during_race(ax, session, drv, drv_laps):
     """
     Show every compound used since first lap counting
     with the new compound tyres put it in pit stops
@@ -61,8 +61,11 @@ def show_compound_used_during_race(ax, session, drv, drv_laps, drivers_retired):
     ax (axis): y axis
     session (obj): object with data about the session
     drv (string): driver
-    drivers_retired (list): retired drivers list of the race
     """
+
+    # Get drivers retired
+    drivers_retired = session.results[session.results["Status"] == "Retired"]["Abbreviation"].tolist()
+
     # Get first lap of the race
     first_lap_df = drv_laps[drv_laps['LapNumber'] == 1].iloc[0]
 
@@ -89,7 +92,7 @@ def show_compound_used_during_race(ax, session, drv, drv_laps, drivers_retired):
         # Each pit in laps I show LapNumber, Position and 
         # compound put it in pit out lap
         for idx, box_lap in box_in_laps.iterrows():
-            compound = str(box_laps.iloc[idx+1]["Compound"])
+            compound = str(box_laps.iloc[idx]["Compound"])
             compound_color = fastf1.plotting.get_compound_color(compound, session)
             ax.scatter(
                 x=box_lap['LapNumber'],
@@ -207,6 +210,44 @@ def show_race_control_events(session, ax):
                     label=label_track_status,
                     )
 
+def show_first_lap(laps, session, ax):
+
+    positions = {}
+    retired_drivers = []
+    first_laps = laps[laps["LapNumber"] == 1][["Position", "Driver"]]
+
+    # Get position drivers in first lap
+    for idx, row in first_laps.iterrows():
+        if pd.notna(row["Position"]):
+            positions[int(row["Position"])] = row["Driver"]
+        else:
+            retired_drivers.append(row["Driver"])
+
+    positions = dict(sorted(positions.items()))
+
+    # Check if there are drivers that retired in first lap
+    if len(retired_drivers) > 0:
+        for retire_driver in retired_drivers:
+            positions[int(max(positions.keys())+1)] = retire_driver
+
+    show_drivers(session=session, position_drivers=positions, ax=ax)
+
+def show_final_positions(session, ax):
+    positions = {}
+    for index, driver_result in session.results.iterrows():
+        position = driver_result["Position"] if not pd.isna(driver_result["Position"]) else len(session.results)
+        positions[int(position)] = driver_result['Abbreviation']
+    show_drivers(session=session, position_drivers=positions, ax=ax)
+
+def show_drivers(session, position_drivers, ax):
+    # Create custom badges for the Y-axis
+    y_labels = [position_drivers.get(pos, "") for pos in range(1, len(session.results)+1)]
+    positions = range(1, len(session.results) + 1)
+
+    # Configure the Y-axis with custom labels
+    ax.set_yticks(positions)
+    ax.set_yticklabels(y_labels)
+
 def race_position_evolution_analisys(type_event:str, year: int, event: int, session: str):
     """
     Analyzes the race position evolution of the drivers in a race session.
@@ -229,9 +270,6 @@ def race_position_evolution_analisys(type_event:str, year: int, event: int, sess
 
     # Get the laps data
     laps = try_get_session_laps(session=session, laps_not_wo_box=False)
-
-    # Get drivers retired
-    drivers_retired = session.results[session.results["Status"] == "Retired"]["Abbreviation"].tolist()
 
     # Get drivers saw checked flag
     drivers_saw_checked_flag = session.results[session.results["Time"].notna()]["Abbreviation"].tolist()
@@ -264,8 +302,7 @@ def race_position_evolution_analisys(type_event:str, year: int, event: int, sess
             ax=ax,
             session=session,
             drv=drv,
-            drv_laps=drv_laps,
-            drivers_retired=drivers_retired
+            drv_laps=drv_laps
         )
 
         # Check the driver saw checked flag
@@ -281,24 +318,18 @@ def race_position_evolution_analisys(type_event:str, year: int, event: int, sess
             )
 
     # Show race control events during the race
-    show_race_control_events(
+    """show_race_control_events(
         session=session,
         ax=ax
-    )
+    )"""
 
-    # Get final positions of drivers
-    final_positions = {}
-    for index, driver_result in session.results.iterrows():
-        position = driver_result['Position'] if not pd.isna(driver_result['Position']) else len(session.results)
-        final_positions[int(position)] = driver_result['Abbreviation']
+    show_first_lap(laps=laps, session=session, ax=ax)
 
-    # Create custom badges for the Y-axis
-    positions = range(1, len(session.results) + 1)
-    y_labels = [f'{final_positions.get(pos, "")}' for pos in positions]
+    ax1 = ax.twinx()
+    ax1.set_ylim(ax.get_ylim())
+    ax1.invert_yaxis()
 
-    # Configure the Y-axis with custom labels
-    ax.set_yticks(positions)
-    ax.set_yticklabels(y_labels)
+    show_final_positions(session=session, ax=ax1)
 
     # Stablish left and right limits in xaxis
     last_lap = int(laps["LapNumber"].max())
