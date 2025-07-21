@@ -51,7 +51,7 @@ def show_checked_flag(ax, last_position, last_lap_number):
         edgecolors='none', 
     )
 
-def show_compound_used_during_race(ax, session, drv, drv_laps):
+def show_compound_used_during_race(ax, session, drv):
     """
     Show every compound used since first lap counting
     with the new compound tyres put it in pit stops
@@ -65,21 +65,23 @@ def show_compound_used_during_race(ax, session, drv, drv_laps):
 
     # Get drivers retired
     drivers_retired = session.results[session.results["Status"] == "Retired"]["Abbreviation"].tolist()
+    drv_laps = session.laps.pick_drivers(drv)
 
-    # Get first lap of the race
-    first_lap_df = drv_laps[drv_laps['LapNumber'] == 1].iloc[0]
+    try:
+        # Plot compound used in the start of the race
+        compound = str(drv_laps[drv_laps['LapNumber'] == 1].iloc[0]["Compound"])
+        first_compound = fastf1.plotting.get_compound_color(compound, session)
 
-    # Plot compound used in the start of the race
-    compound = str(first_lap_df['Compound'])
-    first_compound_color = fastf1.plotting.get_compound_color(compound, session)
-    ax.scatter(
-        x=first_lap_df['LapNumber'],
-        y=first_lap_df['Position'],
-        c=first_compound_color,
-        edgecolors='#000000',
-        s=80,
-        zorder=3
-    )
+        ax.scatter(
+            x=0,
+            y=int(session.results[session.results["Abbreviation"] == drv]["GridPosition"]),
+            c=first_compound,
+            edgecolors='#000000',
+            s=80,
+            zorder=3
+        )
+    except Exception as e:
+        ...
 
     # Check the driver is not retired
     if drv not in drivers_retired:
@@ -87,150 +89,82 @@ def show_compound_used_during_race(ax, session, drv, drv_laps):
         box_laps = drv_laps.pick_box_laps(which='both').reset_index()
 
         # From that we take only pit in laps
-        box_in_laps = box_laps[box_laps["PitInTime"].notna()]
+        box_laps["TrackStatus"] = box_laps['TrackStatus'].astype(int)
+        box_in_laps = box_laps.loc[box_laps["PitInTime"].notna() & box_laps["TrackStatus"] == 1]
 
         # Each pit in laps I show LapNumber, Position and 
         # compound put it in pit out lap
         for idx, box_lap in box_in_laps.iterrows():
-            compound = str(box_laps.iloc[idx]["Compound"])
-            compound_color = fastf1.plotting.get_compound_color(compound, session)
-            ax.scatter(
-                x=box_lap['LapNumber'],
-                y=box_lap['Position'],
-                c=compound_color,
-                edgecolors='#000000',
-                s=80,
-                zorder=3
-            )
+            try:
+                compound = str(box_laps.iloc[idx]["Compound"])
+                compound_color = fastf1.plotting.get_compound_color(compound, session)
+                ax.scatter(
+                    x=box_lap['LapNumber'],
+                    y=box_lap['Position'],
+                    c=compound_color,
+                    edgecolors='#000000',
+                    s=80,
+                    zorder=3
+                )
+            except Exception as e:
+                continue
 
-def get_race_control_events(session):
+def get_track_status_color(msg):
+    color = ""
+    if msg == "Yellow":
+        color = '#FFD700'
+    elif msg == "Red":
+        color = "#FF7070"
+    elif msg == "SCDeployed":
+        color = "#FFE760"
+    elif msg == "VSCDeployed":
+        color = '#B8860B'
+    return color
 
-    flags = ["RED","DOUBLE YELLOW","YELLOW"]
-    flags_showed = list(set(session.race_control_messages["Flag"].tolist())&set(flags))
+def get_track_status(session):
+    track_status = session.track_status
+    track_status = track_status[(track_status["Message"] != "AllClear") & (track_status["Message"] != "VSCEnding")]
 
-    safety_cars = ["SAFETY CAR", "VIRTUAL SAFETY CAR"]
-    safety_cars_deployed = list()
-    for type_safety in safety_cars:
-        if "VIRTUAL" in type_safety:
-            mask = session.race_control_messages["Message"].str.contains(r"SAFETY(?!.*VIRTUAL)", case=False, regex=True)
-        else:
-            mask = (session.race_control_messages["Message"].str.contains("SAFETY", case=False, regex=True) &
-                ~session.race_control_messages["Message"].str.contains("VIRTUAL", case=False, regex=True))
+    track_status['Color'] = track_status["Message"].apply(get_track_status_color)
 
-        # Get safety laps
-        safety_car_messages = session.race_control_messages[mask]
-        if not safety_car_messages.empty:
-            safety_cars_deployed.append(
-                safety_cars[1] if type_safety == safety_cars[1] else safety_cars[2]
-            )
-    race_control_events_happened = flags_showed + safety_cars_deployed
+    track_status['NextTime'] = track_status['Time'].shift(-1)
+    track_status['NextMessage'] = track_status['Message'].shift(-1)
+    track_status['LapStartEvent'] = 0
+    track_status['LapFinishEvent'] = 0
 
-    return race_control_events_happened
+    driver_laps = session.laps
+    for status_idx in track_status.index:
+        status_row = track_status.loc[status_idx]
+        if status_row["Message"] != "AllClear" and pd.notna(status_row['NextTime']):
+            mask = (status_row["Time"] <= driver_laps["Time"]) & \
+                    (driver_laps["Time"] <= status_row["NextTime"])
+            laps_in_period = driver_laps[mask]
+            if not laps_in_period.empty:
+                track_status.loc[status_idx, 'LapStartEvent'] = laps_in_period['LapNumber'].min()
+                track_status.loc[status_idx, 'LapFinishEvent'] = laps_in_period['LapNumber'].max()
+    track_status = track_status.loc[(track_status['LapStartEvent'] != 0) | (track_status['LapFinishEvent'] != 0)]
+    return track_status
 
 def show_race_control_events(session, ax):
 
-    track_status_obj = {
-        'RED': {
-            'Label': 'Red flag',
-            'Color': '#FF7F7F'
-        },
-        'DOUBLE YELLOW': {
-            'Label': 'Double yellow',
-            'Color': '#FFFECD'
-        },
-        'YELLOW': {
-            'Label': 'Yellow flag',
-            'Color': '#FFFACD'
-        },
-        'SAFETY CAR': {
-            'Label': 'Safety car',
-            'Color': '#FFD700',
-        },
-        'VIRTUAL SAFETY CAR': {
-            'Label': 'Virtual safety car',
-            'Color': '#B8860B'
-        }
-    }
+    events = list()
+    track_status = get_track_status(session=session)
+    for idx, row in track_status.iterrows():
+        ax.axvspan(
+            xmin=row["LapStartEvent"], 
+            xmax=row["LapFinishEvent"], 
+            color=row["Color"], 
+            alpha=0.2, 
+            lw=0,
+            label= row['Message'] if row['Message'] not in events else "",
+            )
+        if row['Message'] not in events: events.append(row['Message'])
 
-    # Get every race control flag event in a list
-    race_control_events_happened = get_race_control_events(session=session)
+def show_starting_grid(session, ax):
 
-    # Get flags list
-    flags = list(track_status_obj.keys())[0:3]
-    for key, value in track_status_obj.items():
-
-        # Check if the key is the track status
-        if key in race_control_events_happened:
-
-            # Get laps with the track status
-            if key in flags:
-                laps_track_status = session.race_control_messages[session.race_control_messages["Flag"] == key]
-            else:
-                if "VIRTUAL" in key:
-                    laps_track_status = session.race_control_messages[session.race_control_messages["Message"].str.contains("VIRTUAL", case=False, regex=True)]
-                else:
-                    laps_track_status = session.race_control_messages[session.race_control_messages["Message"].str.contains("SAFETY CAR", case=False, regex=True)]
-
-            # Group events in different momments of the session
-            laps_track_status['diff'] = laps_track_status['Lap'].diff().fillna(1)
-            laps_track_status['grupo'] = (laps_track_status['diff'] > 1).cumsum()
-            grups = laps_track_status.groupby('grupo').agg({'Lap': ['min', 'max']})
-            grups.columns = ['Start', 'End']
-            print(grups)
-
-            # Plot event in grahpic
-            for idx, row in grups.iterrows():
-
-                lap_start = float(row["Start"])
-                lap_finish = float(row["End"])
-
-                # Check if lap finish is the same like
-                # lap start
-                if lap_start == lap_finish:
-                    lap_finish = lap_finish + 1
-
-                # Check if array has only one row
-                if len(grups) == 1:
-                    label_track_status = value["Label"]
-                else:
-
-                    # Check if it is the first iteration
-                    if idx == 0:
-                        label_track_status = value["Label"]
-                    else:
-                        label_track_status = ""
-
-                color = track_status_obj[key]["Color"]
-                ax.axvspan(
-                    xmin=lap_start, 
-                    xmax=lap_finish, 
-                    color=color, 
-                    alpha=0.2, 
-                    lw=0,
-                    label=label_track_status,
-                    )
-
-def show_first_lap(laps, session, ax):
-
-    positions = {}
-    retired_drivers = []
-    first_laps = laps[laps["LapNumber"] == 1][["Position", "Driver"]]
-
-    # Get position drivers in first lap
-    for idx, row in first_laps.iterrows():
-        if pd.notna(row["Position"]):
-            positions[int(row["Position"])] = row["Driver"]
-        else:
-            retired_drivers.append(row["Driver"])
-
-    positions = dict(sorted(positions.items()))
-
-    # Check if there are drivers that retired in first lap
-    if len(retired_drivers) > 0:
-        for retire_driver in retired_drivers:
-            positions[int(max(positions.keys())+1)] = retire_driver
-
-    show_drivers(session=session, position_drivers=positions, ax=ax)
+    df = session.results[["Abbreviation", "GridPosition"]]
+    position_drivers = dict(zip(df['GridPosition'], df['Abbreviation']))
+    show_drivers(session=session, position_drivers=position_drivers, ax=ax)
 
 def show_final_positions(session, ax):
     positions = {}
@@ -280,6 +214,7 @@ def race_position_evolution_analisys(type_event:str, year: int, event: int, sess
     driver_stints = {}
     drivers = session.results["Abbreviation"].tolist()
     for drv in drivers:
+
         # Get the laps for the driver
         drv_laps = laps.pick_drivers(drv)
 
@@ -293,6 +228,18 @@ def race_position_evolution_analisys(type_event:str, year: int, event: int, sess
                                                 style=['color', 'linestyle'],
                                                 session=session)
 
+        start_row = pd.DataFrame([{
+            'LapNumber': 0,
+            'Position': int(session.results[session.results["Abbreviation"] == abb]["GridPosition"].iloc[0]),
+        }])
+        last_row = pd.DataFrame([{
+            "LapNumber": len(drv_laps) + 1,
+            "Position": int(session.results[session.results["Abbreviation"] == abb]["Position"])
+        }])
+
+        drv_laps = pd.concat([start_row, drv_laps[["LapNumber", "Position"]], last_row[["LapNumber","Position"]]], ignore_index=True)
+        drv_laps = drv_laps.sort_values("LapNumber")
+
         # Plot the laps of the driver
         ax.plot(drv_laps['LapNumber'], drv_laps['Position'],
                 **style, zorder=1)
@@ -301,8 +248,7 @@ def race_position_evolution_analisys(type_event:str, year: int, event: int, sess
         show_compound_used_during_race(
             ax=ax,
             session=session,
-            drv=drv,
-            drv_laps=drv_laps
+            drv=drv
         )
 
         # Check the driver saw checked flag
@@ -323,7 +269,7 @@ def race_position_evolution_analisys(type_event:str, year: int, event: int, sess
         ax=ax
     )"""
 
-    show_first_lap(laps=laps, session=session, ax=ax)
+    show_starting_grid(session=session, ax=ax)
 
     ax1 = ax.twinx()
     ax1.set_ylim(ax.get_ylim())
@@ -333,7 +279,7 @@ def race_position_evolution_analisys(type_event:str, year: int, event: int, sess
 
     # Stablish left and right limits in xaxis
     last_lap = int(laps["LapNumber"].max())
-    ax.set_xlim(left=0,right=last_lap+2)
+    ax.set_xlim(left=-1,right=last_lap+2)
 
     # Add labels and legend
     ax.set_xlabel('Lap Number')
