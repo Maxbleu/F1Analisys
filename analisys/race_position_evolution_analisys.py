@@ -110,7 +110,7 @@ def show_compound_used_during_race(ax, session, drv):
                 continue
 
 def get_track_status_color(msg):
-    color = ""
+    color = "#00FF00FF"
     if msg == "Yellow":
         color = '#FFD700'
     elif msg == "Red":
@@ -123,7 +123,7 @@ def get_track_status_color(msg):
 
 def get_track_status(session):
     track_status = session.track_status
-    track_status = track_status[(track_status["Message"] != "AllClear") & (track_status["Message"] != "VSCEnding")]
+    track_status = track_status[track_status["Message"] != "VSCEnding"]
 
     track_status['Color'] = track_status["Message"].apply(get_track_status_color)
 
@@ -135,13 +135,14 @@ def get_track_status(session):
     driver_laps = session.laps
     for status_idx in track_status.index:
         status_row = track_status.loc[status_idx]
-        if status_row["Message"] != "AllClear" and pd.notna(status_row['NextTime']):
+        if pd.notna(status_row['NextTime']):
             mask = (status_row["Time"] <= driver_laps["Time"]) & \
                     (driver_laps["Time"] <= status_row["NextTime"])
             laps_in_period = driver_laps[mask]
+            laps_in_period["LapNumber"] = laps_in_period["LapNumber"].astype("int")
             if not laps_in_period.empty:
                 track_status.loc[status_idx, 'LapStartEvent'] = laps_in_period['LapNumber'].min()
-                track_status.loc[status_idx, 'LapFinishEvent'] = laps_in_period['LapNumber'].max()
+                track_status.loc[status_idx, 'LapFinishEvent'] = laps_in_period['LapNumber'].max()+1 if int(laps_in_period['LapNumber'].max()) == int(laps_in_period['LapNumber'].min()) else laps_in_period['LapNumber'].max()
     track_status = track_status.loc[(track_status['LapStartEvent'] != 0) | (track_status['LapFinishEvent'] != 0)]
     return track_status
 
@@ -154,9 +155,9 @@ def show_race_control_events(session, ax):
             xmin=row["LapStartEvent"], 
             xmax=row["LapFinishEvent"], 
             color=row["Color"], 
-            alpha=0.2, 
+            alpha= 0.2 if row["Message"] != "AllClear" else 0.0, 
             lw=0,
-            label= row['Message'] if row['Message'] not in events else "",
+            label= row['Message'] if (row['Message'] not in events) & (row["Message"] != "AllClear") else "",
             )
         if row['Message'] not in events: events.append(row['Message'])
 
@@ -211,7 +212,6 @@ def race_position_evolution_analisys(type_event:str, year: int, event: int, sess
     fig, ax = plt.subplots(figsize=(9.5, 6))
 
     # Show laps in the plot
-    driver_stints = {}
     drivers = session.results["Abbreviation"].tolist()
     for drv in drivers:
 
@@ -228,21 +228,23 @@ def race_position_evolution_analisys(type_event:str, year: int, event: int, sess
                                                 style=['color', 'linestyle'],
                                                 session=session)
 
+        # Indicate grid position
         start_row = pd.DataFrame([{
             'LapNumber': 0,
             'Position': int(session.results[session.results["Abbreviation"] == abb]["GridPosition"].iloc[0]),
         }])
+
+        # Indicate last position with race finishers and retires drivers
         last_row = pd.DataFrame([{
-            "LapNumber": len(drv_laps) + 1,
-            "Position": int(session.results[session.results["Abbreviation"] == abb]["Position"])
+            "LapNumber": drv_laps["LapNumber"].max() + 1,
+            "Position": int(session.results.loc[session.results["Abbreviation"] == abb, "Position"].iloc[0])
         }])
 
-        drv_laps = pd.concat([start_row, drv_laps[["LapNumber", "Position"]], last_row[["LapNumber","Position"]]], ignore_index=True)
-        drv_laps = drv_laps.sort_values("LapNumber")
+        drv_laps = pd.concat([start_row, last_row, drv_laps[["LapNumber", "Position"]]], ignore_index=True)
+        drv_laps = drv_laps.sort_values("LapNumber").reset_index(drop=True)
 
         # Plot the laps of the driver
-        ax.plot(drv_laps['LapNumber'], drv_laps['Position'],
-                **style, zorder=1)
+        ax.plot(drv_laps['LapNumber'], drv_laps['Position'], **style, zorder=1)
 
         # Show compound used during race
         show_compound_used_during_race(
@@ -253,7 +255,6 @@ def race_position_evolution_analisys(type_event:str, year: int, event: int, sess
 
         # Check the driver saw checked flag
         if drv in drivers_saw_checked_flag:
-            # Get last position record in the last lap
             last_position = int(drv_laps.iloc[len(drv_laps)-1]["Position"])
             # Get last lap number of the race
             last_lap_number = int(drv_laps.iloc[len(drv_laps)-1]["LapNumber"])
@@ -264,10 +265,10 @@ def race_position_evolution_analisys(type_event:str, year: int, event: int, sess
             )
 
     # Show race control events during the race
-    """show_race_control_events(
+    show_race_control_events(
         session=session,
         ax=ax
-    )"""
+    )
 
     show_starting_grid(session=session, ax=ax)
 
