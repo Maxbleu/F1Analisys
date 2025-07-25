@@ -72,13 +72,13 @@ In every endpoint of this project, after the url, you can put if you want conver
 
 ### In image
 
-#### `/official/track_dominance/2024/10/Q?convert_img=False` or `/official/track_dominance/2024/10/Q`
+#### `/api/official/track_dominance/2024/10/Q?convert_img=False` or `/official/track_dominance/2024/10/Q`
 In this case the url would be: [this example](https://f1analisys-production.up.railway.app/official/track_dominance/2024/10/Q)
 
 <img src="./img/example_get_image_not_converted.png" alt="ejemplo de obtener un analisis sin convertir a bytes">
 
 ### In bytes
-#### `/official/track_dominance/2024/10/Q?convert_img=True`
+#### `/api/official/track_dominance/2024/10/Q?convert_img=True`
 In this case the url would be: [this example](https://f1analisys-production.up.railway.app/official/track_dominance/2024/10/Q?convert_img=True)
 
 <img src="./img/example_get_image_converted.png" alt="ejemplo de obtener un analisis convertido a bytes">
