@@ -20,6 +20,7 @@ F1 project to analyze the data of the F1 championship making use of the pandas l
 - Throttle usage ![Sesión Oficial](https://img.shields.io/badge/-Official-blue) ![Sesión Oficial](https://img.shields.io/badge/-Pretesting-red)
 - Braking usage ![Sesión Oficial](https://img.shields.io/badge/-Official-blue) ![Sesión Oficial](https://img.shields.io/badge/-Pretesting-red)
 - Long runs ![Sesión Oficial](https://img.shields.io/badge/-Official-blue) ![Sesión Oficial](https://img.shields.io/badge/-Pretesting-red)
+- Optimal lap impact ![Sesión Oficial](https://img.shields.io/badge/-Qualy-orange) ![Sesión Oficial](https://img.shields.io/badge/-SprintQualy-yellow) ![Sesión Oficial](https://img.shields.io/badge/-SprintShootout-pink)
 
 # Sections
 1. [Instalation](#instalation)
