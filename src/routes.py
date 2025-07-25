@@ -179,7 +179,7 @@ def get_long_runs(
     return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing
 
-@router.get("/official/optimal_lap_impact/{year}/{event}/{session}", tags=["Official sessions"])
+@router.get("/official/optimal_lap_impact/{year}/{event}/{session}", tags=["Oficial sessions"])
 def get_optimal_lap_impact(
     year: int, 
     event: int = None, 
