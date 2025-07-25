@@ -10,3 +10,4 @@ from .comparative_lap_time_analisys import comparative_lap_time_analisys
 from .braking_analisys import braking_analisys
 from .throttle_analisys import throttle_analisys
 from .long_runs_analisys import long_runs_analisys
+from .optimal_lap_impact_analisys import optimal_lap_impact_analisys

@@ -3,7 +3,7 @@ from fastapi.responses import RedirectResponse
 
 from analisys._init_ import track_dominance_analisys, top_speed_analisys, lap_time_average_analisys, team_performace_analisys, \
     lap_time_distribution_analisys, fastest_laps_analisys, race_position_evolution_analisys, fastest_drivers_compound_analisys, \
-    comparative_lap_time_analisys, braking_analisys, throttle_analisys, long_runs_analisys
+    comparative_lap_time_analisys, braking_analisys, throttle_analisys, long_runs_analisys, optimal_lap_impact_analisys
 
 from utils._init_ import convert_img_to_bytes, save_img, get_info_drivers
 
@@ -176,5 +176,17 @@ def get_long_runs(
 
     vueltas_pilotos_dict = get_info_drivers(pilotos_info)
     long_runs_analisys(type_event, year, event, session, threshold, vueltas_pilotos_dict, indexing)
+    return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
+    return return_thing
+
+@router.get("/official/optimal_lap_impact/{year}/{event}/{session}", tags=["Official sessions"])
+def get_optimal_lap_impact(
+    year: int, 
+    event: int = None, 
+    session: str = None,
+    convert_to_bytes: bool = False
+    ):
+
+    optimal_lap_impact_analisys("official", year, event, session)
     return_thing = convert_img_to_bytes() if convert_to_bytes else save_img()
     return return_thing
