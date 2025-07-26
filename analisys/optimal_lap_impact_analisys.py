@@ -62,11 +62,17 @@ def optimal_lap_impact_analisys(type_event:str, year: int, event: int, session: 
     left_x = 0.00
     right_x = 1.00
     label_lengend_show = list()
-    y_positions = np.linspace(0.95, 0.05, 20)
-    for i, (driver, qual_pos, opti_pos) in enumerate(zip(drivers, df_qualy_results["Position"].tolist(), df_optimal_laps["OptimalPosition"].tolist())):
-        qual_pos = int(qual_pos)
-        opti_pos = int(opti_pos)
+    num_drivers = len(drivers)
+    y_positions = np.linspace(0.95, 0.05, num_drivers)
 
+    df_qualy_results = df_qualy_results.sort_values("Position")
+    df_optimal_laps = df_optimal_laps.sort_values("OptimalPosition")
+
+    # Crear un mapeo más seguro
+    for driver in drivers:
+        qual_pos = df_qualy_results[df_qualy_results["Abbreviation"] == driver]["Position"].iloc[0]
+        opti_pos = df_optimal_laps[df_optimal_laps["Driver"] == driver]["OptimalPosition"].iloc[0]
+        
         start_y = y_positions[int(qual_pos)-1]
         end_y = y_positions[int(opti_pos)-1]
         
@@ -110,6 +116,8 @@ def optimal_lap_impact_analisys(type_event:str, year: int, event: int, session: 
         label="Optimal qualy result"
     )
 
+    ax.xaxis.grid(True, which='major', linestyle='--', color='black', zorder=-1000)
+    ax.set_axisbelow(True)
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.1), ncol=len(session.drivers)//2)
     plt.suptitle(f'{session.event["EventName"]} {session.event.year} {session.name}\n Optimal qualy lap results')
     plt.tight_layout()
