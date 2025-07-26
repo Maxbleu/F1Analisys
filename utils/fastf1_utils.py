@@ -1,6 +1,7 @@
 import fastf1.plotting
 import fastf1
 
+import pandas as pd
 import numpy as np
 
 from utils._init_ import send_error_message
@@ -37,7 +38,8 @@ def try_get_session_laps(session, laps_not_deleted=True, laps_not_wo_box=True):
         elif laps_not_wo_box:
             laps = session.laps.pick_wo_box()
         else:
-            laps = session.laps
+            laps = session.laps.copy()
+            laps.loc[:, "LapTime"] = pd.to_timedelta(laps["LapTime"])
     except Exception as e:
         send_error_message(
             status_code=404, 

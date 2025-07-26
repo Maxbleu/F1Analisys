@@ -20,12 +20,11 @@ def comparative_lap_time_analisys(type_event:str, year: int, event: int, session
     vueltas_pilotos (dict): A dictionary with the laps of each driver.
     """
 
-    fastf1.plotting.setup_mpl(mpl_timedelta_support=True, misc_mpl_mods=True, color_scheme='fastf1')
+    fastf1.plotting.setup_mpl(mpl_timedelta_support=True, color_scheme='fastf1')
 
     # Get the session and laps data
     session = get_session(type_event, year, event, session)
     laps = try_get_session_laps(session=session)
-    laps["LapTime"] = pd.to_timedelta(laps["LapTime"])
 
     # Check if user indicated laps to analyze
     vueltas_pilotos = {}

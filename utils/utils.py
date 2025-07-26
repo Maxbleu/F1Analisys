@@ -28,16 +28,9 @@ def save_img():
     file_path = "./temp/plot_saved.png"
     if os.path.exists(file_path):
         os.remove(file_path)
-
     fig = plt.gcf()
-    fig_size_inch = fig.get_size_inches()
-    fig_size_px = fig_size_inch * fig.dpi
-    fig_size_px = fig_size_px.astype(np.int32)
-    image = Image.new('RGB', (fig_size_px[0],fig_size_px[1]), color = (255, 255, 255))
-    image.save(file_path)
-
-    plt.savefig(file_path)
-    plt.close()
+    fig.savefig(file_path)
+    plt.close(fig)
     return RedirectResponse(url="/temp/plot_saved.png")
 
 def send_error_message(status_code, title, message):
