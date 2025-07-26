@@ -26,19 +26,20 @@ def convert_img_to_bytes():
 
 def save_img():
     file_path = "./temp/plot_saved.png"
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
     if os.path.exists(file_path):
         os.remove(file_path)
-
     fig = plt.gcf()
-    fig_size_inch = fig.get_size_inches()
-    fig_size_px = fig_size_inch * fig.dpi
-    fig_size_px = fig_size_px.astype(np.int32)
-    image = Image.new('RGB', (fig_size_px[0],fig_size_px[1]), color = (255, 255, 255))
-    image.save(file_path)
-
-    plt.savefig(file_path)
-    plt.close()
-    return RedirectResponse(url="/temp/plot_saved.png")
+    if fig.get_axes():
+        plt.savefig(file_path, dpi=fig.dpi, bbox_inches='tight', facecolor='white', edgecolor='none')
+        plt.close()
+        if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
+            return RedirectResponse(url="/temp/plot_saved.png")
+        else:
+            raise HTTPException(status_code=500, detail="Error al guardar la imagen")
+    else:
+        plt.close()
+        raise HTTPException(status_code=500, detail="No hay gráfico para guardar")
 
 def send_error_message(status_code, title, message):
     raise HTTPException(
