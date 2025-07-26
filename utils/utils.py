@@ -4,6 +4,7 @@ from fastapi.responses import RedirectResponse
 from fastapi import HTTPException
 
 import io
+import time
 import base64
 import numpy as np
 
@@ -38,7 +39,8 @@ def save_img():
 
     plt.savefig(file_path)
     plt.close()
-    return RedirectResponse(url="/temp/plot_saved.png")
+    timestamp = int(time.time() * 1000)
+    return RedirectResponse(url=f"/temp/plot_saved.png?v={timestamp}")
 
 def send_error_message(status_code, title, message):
     raise HTTPException(
