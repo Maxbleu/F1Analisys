@@ -40,17 +40,23 @@ def optimal_lap_impact_analisys(type_event:str, year: int, event: int, session: 
 
     # Get optimal laps
     df_optimal_laps = pd.DataFrame(columns=["Driver","OptimalPosition", "OptimalTime"])
-    drivers = laps["Driver"].unique().tolist()
+    drivers = df_qualy_results["Abbreviation"].tolist()
     for drv in drivers:
         driver_laps = laps.pick_drivers(drv)
-        sector1 = float(driver_laps[["Sector1Time"]].min())
-        sector2 = float(driver_laps[["Sector2Time"]].min())
-        sector3 = float(driver_laps[["Sector3Time"]].min())
-        optimal_lap_time = sector1 + sector2 + sector3
-        new_row = {
-            "Driver": drv,
-            "OptimalTime": optimal_lap_time
-        }
+        if driver_laps.empty:
+            new_row = {
+                "Driver": drv,
+                "OptimalTime": float(1000.0)
+            }
+        else:
+            sector1 = float(driver_laps[["Sector1Time"]].min())
+            sector2 = float(driver_laps[["Sector2Time"]].min())
+            sector3 = float(driver_laps[["Sector3Time"]].min())
+            optimal_lap_time = sector1 + sector2 + sector3
+            new_row = {
+                "Driver": drv,
+                "OptimalTime": optimal_lap_time
+            }
         df_optimal_laps = pd.concat([df_optimal_laps, pd.DataFrame([new_row])], ignore_index=True)
 
     # Sort optimal laps by optimal time
