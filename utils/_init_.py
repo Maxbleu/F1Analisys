@@ -1,9 +1,6 @@
 from .utils import (
     format_time_mmssmmm,
-    convert_img_to_bytes,
-    save_img,
-    send_error_message,
-    get_info_drivers
+    send_error_message
 )
 
 from .fastf1_utils import (
@@ -11,4 +8,25 @@ from .fastf1_utils import (
     get_session,
     try_get_session_laps,
     get_delta_time
+)
+
+from .path_utils import (
+    get_info_drivers,
+    exists_plot_in_temp,
+    get_path_temp_plot
+)
+
+from .image_utils import (
+    convert_img_to_bytes,
+    save_img
+)
+
+from .files_utils import (
+    remove_all_temp_plots,
+    is_temp_under_limits,
+    delete_first_plot
+)
+
+from .auth_utils import (
+    verify_token
 )
