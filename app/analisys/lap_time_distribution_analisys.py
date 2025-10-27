@@ -3,7 +3,7 @@ import matplotlib.ticker as ticker
 import seaborn as sns
 import fastf1.plotting
 
-from utils._init_ import format_time_mmssmmm, get_session, try_get_session_laps
+from app.utils import format_time_mmssmmm, get_session, try_get_session_laps
 
 def lap_time_distribution_analisys(year: int, round: int, session: str):
     """

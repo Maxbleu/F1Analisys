@@ -1,7 +1,7 @@
 from PIL import Image
 from fastapi.responses import RedirectResponse
 import base64, io, numpy as np, matplotlib.pyplot as plt
-from utils.files_utils import is_temp_under_limits, delete_first_plot
+from .files_utils import is_temp_under_limits, delete_first_plot
 
 def convert_img_to_bytes():
     img_io = io.BytesIO()

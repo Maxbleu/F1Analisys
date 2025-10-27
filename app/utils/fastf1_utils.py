@@ -1,10 +1,5 @@
-import fastf1.plotting
-import fastf1
-
-import pandas as pd
-import numpy as np
-
-from utils._init_ import send_error_message
+from .utils import send_error_message
+import fastf1, pandas as pd, numpy as np
 
 def get_session(type_event, year, event, session):
     try:

@@ -6,7 +6,7 @@ import matplotlib.colors as mcolors
 
 from collections import Counter
 
-from utils._init_ import get_session, try_get_session_laps, send_error_message, get_team_colors, get_delta_time
+from app.utils import get_session, try_get_session_laps, send_error_message, get_team_colors, get_delta_time
 
 def comparative_lap_time_analisys(type_event:str, year: int, event: int, session: str, vueltas_pilotos_dict: dict):
     """

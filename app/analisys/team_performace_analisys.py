@@ -4,7 +4,7 @@ import matplotlib.ticker as ticker
 
 import fastf1.plotting
 
-from utils._init_ import format_time_mmssmmm, get_session, try_get_session_laps
+from app.utils import format_time_mmssmmm, get_session, try_get_session_laps
 
 def team_performace_analisys(type_event:str, year: int, event: int, session: str):
     """

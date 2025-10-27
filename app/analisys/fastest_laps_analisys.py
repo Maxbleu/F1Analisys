@@ -4,7 +4,7 @@ from timple.timedelta import strftimedelta
 
 import fastf1.plotting
 
-from utils._init_ import get_team_colors, get_session, try_get_session_laps
+from app.utils import get_team_colors, get_session, try_get_session_laps
 
 def fastest_laps_analisys(type_event:str, year: int, event: int, session: str):
     """

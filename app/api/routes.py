@@ -1,13 +1,12 @@
+from app.auth import verify_token
 from fastapi import APIRouter, Depends
 from fastapi.responses import RedirectResponse, Response
-
-from analisys._init_ import track_dominance_analisys, top_speed_analisys, lap_time_average_analisys, team_performace_analisys, \
+from app.analisys import track_dominance_analisys, top_speed_analisys, lap_time_average_analisys, team_performace_analisys, \
     lap_time_distribution_analisys, fastest_laps_analisys, race_position_evolution_analisys, fastest_drivers_compound_analisys, \
     comparative_lap_time_analisys, braking_analisys, throttle_analisys, long_runs_analisys, optimal_lap_impact_analisys
+from app.utils import convert_img_to_bytes, save_img, get_info_drivers, get_path_temp_plot, remove_all_temp_plots, exists_plot_in_temp
 
-from utils._init_ import convert_img_to_bytes, save_img, get_info_drivers, get_path_temp_plot, remove_all_temp_plots, exists_plot_in_temp, verify_token
-
-router = APIRouter(prefix="/api")
+router = APIRouter()
 
 @router.get("/health", dependencies=[Depends(verify_token)], tags=["System"])
 async def health_check():

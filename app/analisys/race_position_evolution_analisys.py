@@ -6,7 +6,7 @@ import fastf1.plotting
 import numpy as np
 import pandas as pd
 
-from utils._init_ import get_session, send_error_message, try_get_session_laps
+from app.utils import get_session, send_error_message, try_get_session_laps
 
 def create_checkered_flag(row=4, columns=6):
     """

@@ -1,7 +1,7 @@
 import fastf1
 import matplotlib.pyplot as plt
 
-from utils._init_ import get_team_colors, get_session, try_get_session_laps
+from app.utils import get_team_colors, get_session, try_get_session_laps
 
 def top_speed_analisys(type_event:str, year:int, event:int, session:str):
     """

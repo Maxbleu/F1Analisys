@@ -26,7 +26,3 @@ from .files_utils import (
     is_temp_under_limits,
     delete_first_plot
 )
-
-from .auth_utils import (
-    verify_token
-)

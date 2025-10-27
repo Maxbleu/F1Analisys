@@ -1,7 +1,7 @@
 import fastf1
 import matplotlib.pyplot as plt
 import pandas as pd
-from utils._init_ import get_team_colors, get_session, try_get_session_laps
+from app.utils import get_team_colors, get_session, try_get_session_laps
 
 def lap_time_average_analisys(type_event:str, year: int, event: int, session: str):
     """

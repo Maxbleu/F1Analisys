@@ -9,7 +9,7 @@ from matplotlib.collections import LineCollection
 
 from collections import Counter
 
-from utils._init_ import get_session, try_get_session_laps, send_error_message, get_team_colors, get_delta_time
+from app.utils import get_session, try_get_session_laps, send_error_message, get_team_colors, get_delta_time
 
 def track_dominance_analisys(type_event:str, year: int, event: int, session: str, vueltas_pilotos_dict: dict):
     """

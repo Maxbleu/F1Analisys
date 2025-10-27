@@ -3,7 +3,7 @@ from timple.timedelta import strftimedelta
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from utils._init_ import get_team_colors, get_session, try_get_session_laps
+from app.utils import get_team_colors, get_session, try_get_session_laps
 
 def fastest_drivers_compound_analisys(type_event:str, year: int, event: int, session: str):
     """
