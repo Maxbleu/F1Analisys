@@ -1,3 +1,4 @@
+from fastapi import Request
 from .utils import send_error_message
 import fastf1, pandas as pd, numpy as np
 
@@ -62,3 +63,7 @@ def get_delta_time(reference_lap, compare_lap):
     delta = lap_time - ref['Time'].dt.total_seconds()
 
     return delta, ref, comp
+
+def get_request_data(request:Request):
+    path_parts = request.url.path.split("/")
+    return path_parts[3], path_parts[4], int(path_parts[5]), int(path_parts[6]), path_parts[7]

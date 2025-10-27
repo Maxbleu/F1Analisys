@@ -1,4 +1,7 @@
 from PIL import Image
+from fastapi import Request
+from .path_utils import get_path_temp_plot
+from .fastf1_utils import get_request_data
 from fastapi.responses import RedirectResponse
 import base64, io, numpy as np, matplotlib.pyplot as plt
 from .files_utils import is_temp_under_limits, delete_first_plot
@@ -26,3 +29,16 @@ def save_img(file_path:str):
     plt.savefig(file_path)
     plt.close()
     return RedirectResponse(url=file_path[1:])
+
+def get_return(request: Request, convert_to_bytes: bool = False, get_url: bool = False):
+    obj_return = None
+    type_event, analisys, year, event, session = get_request_data(request=request)
+    file_path = get_path_temp_plot(type_event=type_event,analisis=analisys,year=year,round=event,session=session)
+    if (not convert_to_bytes) and (not get_url):
+        obj_return = save_img(file_path)
+    elif convert_to_bytes:
+        obj_return = convert_img_to_bytes()
+    elif get_url:
+        file_name = file_path.split("/")[-1]
+        obj_return = {"url":request.url_for("temp", path=file_name)._url}
+    return obj_return

@@ -5,7 +5,7 @@ import fastf1.plotting
 
 from app.utils import format_time_mmssmmm, get_session, try_get_session_laps
 
-def lap_time_distribution_analisys(year: int, round: int, session: str):
+def lap_time_distribution_analisys(type_event: str, year: int, round: int, session: str):
     """
     Analyzes the fastest stints of a race selecting only the top 10 drivers
 
@@ -17,7 +17,7 @@ def lap_time_distribution_analisys(year: int, round: int, session: str):
 
     fastf1.plotting.setup_mpl(mpl_timedelta_support=False, misc_mpl_mods=False, color_scheme='fastf1')
 
-    session = get_session(year, round, session)
+    session = get_session(type_event, year, round, session)
     laps = try_get_session_laps(session=session)
 
     finishing_order = session.results.iloc[0:10]['Abbreviation'].tolist()

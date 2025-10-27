@@ -7,7 +7,8 @@ from .fastf1_utils import (
     get_team_colors,
     get_session,
     try_get_session_laps,
-    get_delta_time
+    get_delta_time,
+    get_request_data
 )
 
 from .path_utils import (
@@ -18,7 +19,8 @@ from .path_utils import (
 
 from .image_utils import (
     convert_img_to_bytes,
-    save_img
+    save_img,
+    get_return
 )
 
 from .files_utils import (
