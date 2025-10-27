@@ -18,8 +18,9 @@ class AuthMiddleware(BaseHTTPMiddleware):
         """
 
         if not request.url.path.__contains__("system"):
-            request.state.authenticated = False
-            request.state.is_analisys = True
+            if request.url.path.__contains__("analisys"):
+                request.state.authenticated = False
+                request.state.is_analisys = True
             return await call_next(request)
         auth_header = request.headers.get("authorization")
         if not auth_header:
