@@ -34,9 +34,8 @@ def get_return(request: Request, convert_to_bytes: bool = False, get_url: bool =
     obj_return = None
     type_event, analisys, year, event, session = get_request_data(request=request)
     file_path = get_path_temp_plot(type_event=type_event,analisis=analisys,year=year,round=event,session=session)
-    if (not convert_to_bytes) and (not get_url):
-        obj_return = save_img(file_path)
-    elif convert_to_bytes:
+    obj_return = save_img(file_path)
+    if convert_to_bytes:
         obj_return = convert_img_to_bytes()
     elif get_url:
         file_name = file_path.split("/")[-1]

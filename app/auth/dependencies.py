@@ -14,13 +14,13 @@ async def verify_token(credentials: HTTPAuthorizationCredentials = Depends(secur
     try:
         payload = jwt.decode(
             token, 
-            os.getenv("SECRET_KEY","41e9d1caf3d341f332d72f86b88592057dc9ef7e8cdccba74c904c976513d075f021ac0971817b50a3c6a99fff81cdb5de83885c3c85419cb3a33e54e8b98195"), 
-            algorithms=[os.getenv("ALGORITHM","HS256")]
+            os.getenv("SECRET_KEY"), 
+            algorithms=[os.getenv("ALGORITHM")]
         )
         payload_id = str(payload.get("id")).strip().lower()
         payload_sub = str(payload.get("sub")).strip().lower()
-        expected_id = os.getenv("ID_PAYLOAD_JWT","47}z2POZBJ|QNa!f:5l=q_qC{d(MmSK'A#o?4dw0GCf#Rpvf").strip().lower()
-        expected_sub = os.getenv("SUB_PAYLOAD_JWT",";jrL3~vQ+KF76ai[:xZmU/x/ekW[i$pgK-C3BB197SqBO;z").strip().lower()
+        expected_id = os.getenv("ID_PAYLOAD_JWT").strip().lower()
+        expected_sub = os.getenv("SUB_PAYLOAD_JWT").strip().lower()
         if payload_id != expected_id or payload_sub != expected_sub:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED, 
