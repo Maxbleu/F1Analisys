@@ -10,9 +10,7 @@ RUN mkdir -p /app/temp
 COPY . .
 
 ENV PYTHONPATH=/app
-ENV PORT=${PORT:-8000}
-ENV HOST=${HOST:-::}
 
 EXPOSE 8000
 
-CMD uvicorn app.main:app --host ${HOST} --port ${PORT}
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
