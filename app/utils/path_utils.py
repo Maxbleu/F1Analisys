@@ -12,7 +12,8 @@ def get_info_drivers(pilotos_info):
     return vueltas_pilotos_dict
 
 def get_path_temp_plot(type_event:str, analisis:str, year:int, round:int, session:str):
-    return f"./temp/plot_{type_event}_{analisis}_{year}_{round}_{session}.png"
+    directory = os.environ["TEMP_PATH_DIRECTORY"]
+    return os.path.join(directory, f"plot_{type_event}_{analisis}_{year}_{round}_{session}.png")
 
 def exists_plot_in_temp(file_path):
     return os.path.exists(path=file_path)

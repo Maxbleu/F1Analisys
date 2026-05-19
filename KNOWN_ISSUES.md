@@ -8,16 +8,6 @@ Convención: los issues están numerados de forma estable (no renumerar al cerra
 
 ## Abiertos
 
-### KI#1 — Inconsistencia de rutas de caché entre escritura y servido
-
-- `get_path_temp_plot` (`app/utils/path_utils.py`) → devuelve `./temp/plot_...` (hardcoded).
-- `save_img` (`app/utils/image_utils.py`) y `files_utils.*` usan la misma ruta hardcoded.
-- El mount estático en `app/main.py` lee `os.environ["TEMP_PATH_DIRECTORY"]`.
-
-Si `TEMP_PATH_DIRECTORY` ≠ `temp` relativo al `cwd`, el middleware encuentra/guarda en un sitio y el mount sirve desde otro.
-
-**Fix posible**: (a) hacer que `get_path_temp_plot` y `files_utils.*` también lean `TEMP_PATH_DIRECTORY`; o (b) construir las rutas con `pathlib.Path` desde una única constante derivada del env, importada por todos los módulos que tocan la carpeta de caché.
-
 ### KI#2 — `get_return` + `convert_to_bytes` produce PNG en blanco
 
 `save_img` (`app/utils/image_utils.py`) llama `plt.close()` después de guardar. Si el caller pide `convert_to_bytes=True`, `convert_img_to_bytes` hace `plt.savefig(io)` sobre `plt.gcf()`, que ahora es una figura nueva vacía.
@@ -141,3 +131,4 @@ Funciones públicas en `app/utils/utils.py` (`format_time_mmssmmm`, `send_error_
 | 2026-05-19 | Mount estático con backslash literal (`directory="app\\temp"`) | Ahora `directory=os.environ["TEMP_PATH_DIRECTORY"]`, válido en Windows y Linux. |
 | 2026-05-19 | Bypass de auth por substring (`"analisys" in path`) | Ahora `request.url.path.startswith("/api/analisys/")`. |
 | 2026-05-19 | Segundo check del middleware con prefijo equivocado (`/system/` invertido) | Ahora `if not path.startswith("/api/system/"): pass-through`. Validado con TestClient: `/docs` → 200, `/api/system/*` sin token → 401, `/api/analisys/*` → bypass. |
+| 2026-05-19 | KI#1 — Inconsistencia de rutas de caché entre escritura y servido | `path_utils.get_path_temp_plot` y `files_utils.delete_first_plot` ahora leen `TEMP_PATH_DIRECTORY` vía `os.path.join`. `image_utils` usa `os.path.basename(file_path)` y construye la URL de redirect explícita (`/temp/<file>`). Validado en local con cache miss + hit. |

@@ -17,5 +17,5 @@ def is_temp_under_limits():
         return False
 
 def delete_first_plot():
-    directory_path = "./temp/"
+    directory_path = os.environ["TEMP_PATH_DIRECTORY"]
     os.remove(os.path.join(directory_path, os.listdir(directory_path)[0]))

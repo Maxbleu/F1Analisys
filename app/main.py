@@ -1,11 +1,12 @@
-import os, uvicorn
 from .api import router
 from fastapi import FastAPI
+import os, uvicorn, matplotlib
 from dotenv import load_dotenv
-from .middleware import AuthMiddleware, CheckAnalisysMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
+from .middleware import AuthMiddleware, CheckAnalisysMiddleware
 
+matplotlib.use("Agg")  # Backend headless y thread-safe: las rutas de análisis corren en el threadpool de FastAPI.
 load_dotenv(os.getenv("ENV_FILE", ".env"))
 app = FastAPI(title="F1Analisys API Server")
 

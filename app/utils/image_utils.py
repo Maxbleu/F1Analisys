@@ -1,3 +1,4 @@
+import os
 from PIL import Image
 from fastapi import Request
 from .path_utils import get_path_temp_plot
@@ -28,7 +29,7 @@ def save_img(file_path:str):
 
     plt.savefig(file_path)
     plt.close()
-    return RedirectResponse(url=file_path[1:])
+    return RedirectResponse(url=f"/temp/{os.path.basename(file_path)}")
 
 def get_return(request: Request, convert_to_bytes: bool = False, get_url: bool = False):
     obj_return = None
@@ -38,6 +39,6 @@ def get_return(request: Request, convert_to_bytes: bool = False, get_url: bool =
     if convert_to_bytes:
         obj_return = convert_img_to_bytes()
     elif get_url:
-        file_name = file_path.split("/")[-1]
+        file_name = os.path.basename(file_path)
         obj_return = {"url":request.url_for("temp", path=file_name)._url}
     return obj_return

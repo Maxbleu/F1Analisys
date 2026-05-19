@@ -94,8 +94,6 @@ GET /api/analisys/official/top_speed/2024/10/Q
      else:                RedirectResponse(url=file_path[1:])
 ```
 
-**Importante**: `app.main.app` se ejecuta con `cwd = /app` (Dockerfile `WORKDIR /app`). El layout dentro del contenedor es `/app/app/main.py`. El mount estático ahora toma la ruta de `TEMP_PATH_DIRECTORY` (env var), pero `path_utils.get_path_temp_plot` y `files_utils.*` siguen hardcoded a `./temp/...`. Ver `KNOWN_ISSUES.md` → KI#1.
-
 ---
 
 ## 4. Endpoints
@@ -141,7 +139,7 @@ Todos viven bajo `/api`. Tipos de evento: `official` (carreras del calendario of
 
 Mantenidos en [`KNOWN_ISSUES.md`](./KNOWN_ISSUES.md). **Léelo antes de tocar código de análisis, caché o autenticación.** Cuando un issue se resuelva, muévelo a la sección _Resueltos_ con la fecha. Si quieres referenciar uno desde un commit/PR, usa el formato `KI#N`.
 
-Estado a la última actualización: 18 abiertos, 4 resueltos.
+Estado a la última actualización: 17 abiertos, 5 resueltos.
 
 ---
 
@@ -234,7 +232,7 @@ Primer arranque: `fastf1` cachea descargas en `~/.fastf1` (o equivalente en Dock
 - **No corregir la ortografía intencional** (`analisys`, `performace`) salvo que el usuario lo pida explícitamente. Está en URLs públicas y en nombres de cache.
 - **Antes de "limpiar" código aparentemente raro de los análisis**, comprueba si depende de la API de FastF1 (que cambia entre versiones). Lee `app/utils/fastf1_utils.py` primero.
 - **No introducir nuevas dependencias** sin actualizar `requirements.txt` (sin versión pinned salvo necesidad — sigue el estilo actual).
-- **Si tocas paths de la carpeta temp**, recuerda que el mount lee `TEMP_PATH_DIRECTORY` pero `path_utils.get_path_temp_plot` y `files_utils.*` siguen hardcoded. Hoy están desincronizados (`KNOWN_ISSUES.md` → KI#1).
+- **Si tocas paths de la carpeta temp**, todos los módulos (mount, `path_utils`, `files_utils`, `image_utils`) leen `TEMP_PATH_DIRECTORY`. Mantenlo así: si necesitas otra ruta, parametrízala desde env, no hardcodees `./temp/`.
 - **Si tocas el middleware de cache**, asegúrate de que la clave incluye los parámetros que diferencian la salida (e.g. `pilotos_info` en `track_dominance`).
 - **Nunca commitear `.env` ni ningún otro `.env*` salvo `.env.example`**. Está en `.gitignore`; si lo ves trackeado, hay un problema. Para añadir una clave nueva: entrada placeholder en `.env.example` (commiteado) + valor real en `.env` local (no commiteado) + uso con `os.environ["..."]` en código.
 
@@ -243,6 +241,5 @@ Primer arranque: `fastf1` cachea descargas en `~/.fastf1` (o equivalente en Dock
 ## 11. Referencias rápidas
 
 - FastF1 docs: https://docs.fastf1.dev/
-- Producción: https://f1analisys-production.up.railway.app/ (Swagger en `/`)
 - Repo: https://github.com/Maxbleu/F1Analisys
 - Despliegue: GHCR + Dokploy (workflow `.github/workflows/deploy.yaml`)
