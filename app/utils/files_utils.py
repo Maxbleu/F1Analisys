@@ -1,14 +1,14 @@
 import os
 
 def remove_all_temp_plots():
-    directory_path = "./temp/"
+    directory_path = os.environ["TEMP_PATH_DIRECTORY"]
     for filename in os.listdir(directory_path):
         file_path = os.path.join(directory_path, filename)
         if os.path.isfile(file_path):
             os.remove(file_path)
 
 def is_temp_under_limits():
-    directory_path = "./temp/"
+    directory_path = os.environ["TEMP_PATH_DIRECTORY"]
     try:
         files = [f for f in os.listdir(directory_path) 
                 if os.path.isfile(os.path.join(directory_path, f))]

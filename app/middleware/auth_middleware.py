@@ -17,12 +17,12 @@ class AuthMiddleware(BaseHTTPMiddleware):
         Procesa la solicitud y verifica el token de autenticación
         """
 
-        if "analisys" in request.url.path:
+        if request.url.path.startswith("/api/analisys/"):
             request.state.authenticated = False
             request.state.is_analisys = True
             return await call_next(request)
 
-        if "system" not in request.url.path:
+        if not request.url.path.startswith("/api/system/"):
             return await call_next(request)
 
         auth_header = request.headers.get("authorization")

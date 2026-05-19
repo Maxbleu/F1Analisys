@@ -3,3 +3,6 @@ __pycache__
 *.pyo
 *.pyd
 temp
+.env
+!.env.example
+.ruff_cache

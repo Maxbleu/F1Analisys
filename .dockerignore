@@ -1,6 +1,33 @@
+# Secretos — nunca deben entrar en la imagen
+.env
+.env.*
+!.env.example
+
+# Caches de Python / herramientas
+__pycache__
 *.pyc
-git
+*.pyo
+*.pyd
+.ruff_cache
+.pytest_cache
+.mypy_cache
 venv/
+.venv/
+
+# VCS y editor
+.git
+.gitignore
+.gitattributes
 .vscode/
 .idea/
-.git/
+
+# Datos generados en runtime (la imagen ya crea /app/temp vacío)
+temp
+
+# Docs e infra que no aportan al runtime
+AGENTS.md
+KNOWN_ISSUES.md
+ROADMAP.md
+README.md
+.github
+img
